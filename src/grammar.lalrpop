@@ -1,0 +1,101 @@
+use std::str::FromStr;
+use crate::ast::{*};
+
+grammar;
+
+// ----------------------------------------------------------------------------
+// Expression
+// ----------------------------------------------------------------------------
+pub Expr: Box<Expr> = {
+   Expr ExprOp Factor => Box::new(Expr::new(ExprValue::Op(<>))),
+   Factor
+}
+
+ExprOp: Opcode = {
+   "+" => Opcode::Add,
+   "-" => Opcode::Sub,
+}
+
+Factor: Box<Expr> = {
+   Factor FactorOp Term => Box::new(Expr::new(ExprValue::Op(<>))),
+   Term,
+}
+
+FactorOp: Opcode = {
+   "*" => Opcode::Mul,
+   "/" => Opcode::Div,
+}
+
+
+Term: Box<Expr> = { 
+    Num => Box::new(Expr::new(ExprValue::Number(<>))), 
+    Identifier => Box::new(Expr::new(ExprValue::Identifier(<>))),
+    StringLiteral => Box::new(Expr::new(ExprValue::StringLiteral(<>))),
+    "(" <Expr> ")",
+};
+
+// ----------------------------------------------------------------------------
+// Function Definition
+// ----------------------------------------------------------------------------
+
+pub FunDef: FunDef = {
+    "fn(" <args:Comma<Arg>> ")" <body:Expr> =>
+    	FunDef { 
+            args, 
+            body: Block::single_statement(Statement::Expr(body)), 
+            name: None },
+
+    "fn(" <args:Comma<Arg>> ")" <block:Block> =>
+    	FunDef { 
+            args, 
+            body: block, 
+            name: None },
+};
+
+
+Arg: Arg = {
+    FunDef => Arg::new(ArgValue::FunDef(<>)),
+    Expr => Arg::new(ArgValue::Expr(<>)),
+}; 
+
+
+// ----------------------------------------------------------------------------
+// Block
+// ----------------------------------------------------------------------------
+
+Assignment: Assignment = {
+    <identifier:Identifier> "=" <expr:Expr> ";" => Assignment::new(identifier, AssignmentValue::Expr(expr)),
+};
+
+Block: Block = {
+    "{" <statements:Statement*> "}" => Block::new(<>),
+};
+
+Statement: Statement = {
+    <Expr> ";" => Statement::Expr(<>),
+};
+
+
+// ----------------------------------------------------------------------------
+// Terminals
+// ----------------------------------------------------------------------------
+Num: i32 = <s:r"[0-9]+"> => i32::from_str(s).unwrap();
+
+Identifier: String = <s:r"[a-zA-Z_][a-zA-Z0-9_]*"> => s.to_string();
+
+StringLiteral: String = <s:r#""[^"]*""#> => s[1..s.len()-1].to_string();
+
+
+// ----------------------------------------------------------------------------
+// Util
+// ----------------------------------------------------------------------------
+Comma<T>: Vec<T> = {
+    <mut v:(<T> ",")*> <e:T?> => match e {
+        None=> v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
+
