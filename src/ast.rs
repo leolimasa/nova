@@ -26,6 +26,7 @@ pub enum ExprValue {
     Identifier(String),
     Number(i32),
     Op(Box<Expr>, Opcode, Box<Expr>),
+    FunCall(String, Vec<Box<Arg>>),
 }
 
 #[derive(Clone,Debug)]
@@ -50,9 +51,24 @@ pub enum ArgValue {
 }
 
 #[derive(Clone,Debug)]
+pub struct FunArg {
+    pub name: String,
+    pub type_: Type_,
+}
+
+impl FunArg {
+    pub fn new(name: String) -> FunArg {
+        FunArg {
+            name,
+            type_: Type_::Unknown,
+        }
+    }
+}
+
+#[derive(Clone,Debug)]
 pub struct FunDef {
     pub name: Option<String>,
-    pub args: Vec<Arg>,
+    pub args: Vec<FunArg>,
     pub body: Block,
 }
 
@@ -88,7 +104,7 @@ impl Assignment {
     pub fn new(name: String, value: AssignmentValue) -> Assignment {
         Assignment {
             name,
-            value: value,
+            value,
             type_: Type_::Unknown,
         }
     }

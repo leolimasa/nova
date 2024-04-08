@@ -34,29 +34,36 @@ Term: Box<Expr> = {
     "(" <Expr> ")",
 };
 
+Arg: Arg = {
+    FunDefInline => Arg::new(ArgValue::FunDef(<>)),
+    FunDefBlock => Arg::new(ArgValue::FunDef(<>)),
+    Expr => Arg::new(ArgValue::Expr(<>)),
+}; 
+
 // ----------------------------------------------------------------------------
 // Function Definition
 // ----------------------------------------------------------------------------
 
-pub FunDef: FunDef = {
-    "fn(" <args:Comma<Arg>> ")" <body:Expr> =>
+pub FunDefInline: FunDef = {
+    "fn" "(" <args:Comma<FunArg>> ")" <body:Expr> =>
     	FunDef { 
             args, 
             body: Block::single_statement(Statement::Expr(body)), 
             name: None },
+};
 
-    "fn(" <args:Comma<Arg>> ")" <block:Block> =>
+pub FunDefBlock: FunDef = {
+    "fn" "(" <args:Comma<FunArg>> ")" <block:Block> =>
     	FunDef { 
             args, 
             body: block, 
             name: None },
 };
 
+FunArg: FunArg = {
+    Identifier => FunArg::new(<>),
+};
 
-Arg: Arg = {
-    FunDef => Arg::new(ArgValue::FunDef(<>)),
-    Expr => Arg::new(ArgValue::Expr(<>)),
-}; 
 
 
 // ----------------------------------------------------------------------------
@@ -65,6 +72,8 @@ Arg: Arg = {
 
 Assignment: Assignment = {
     <identifier:Identifier> "=" <expr:Expr> ";" => Assignment::new(identifier, AssignmentValue::Expr(expr)),
+    <identifier:Identifier> "=" <fundef:FunDefInline> ";" => Assignment::new(identifier, AssignmentValue::FunDef(fundef)),
+    <identifier:Identifier> "=" <fundef:FunDefBlock> => Assignment::new(identifier, AssignmentValue::FunDef(fundef)),
 };
 
 Block: Block = {
@@ -73,6 +82,7 @@ Block: Block = {
 
 Statement: Statement = {
     <Expr> ";" => Statement::Expr(<>),
+    <Assignment> => Statement::Assignment(<>),
 };
 
 
