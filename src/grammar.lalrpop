@@ -7,23 +7,41 @@ grammar;
 // Expression
 // ----------------------------------------------------------------------------
 pub Expr: Box<Expr> = {
-   Expr ExprOp Factor => Box::new(Expr::new(ExprValue::Op(<>))),
-   Factor
-}
+    #[precedence(level="0")]
+    Term,
+    <name:Identifier> "(" <args:Comma<Arg>> ")" => Box::new(Expr::new(ExprValue::Apply(name, args))),
 
-ExprOp: Opcode = {
-   "+" => Opcode::Add,
-   "-" => Opcode::Sub,
-}
+    #[precedence(level="1")] #[assoc(side="left")]
+    <l:Expr> "." <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Dot, r))),
 
-Factor: Box<Expr> = {
-   Factor FactorOp Term => Box::new(Expr::new(ExprValue::Op(<>))),
-   Term,
-}
+    #[precedence(level="2")] #[assoc(side="left")]
+    "-" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Neg, e))),
+    "+" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Pos, e))),
 
-FactorOp: Opcode = {
-   "*" => Opcode::Mul,
-   "/" => Opcode::Div,
+    #[precedence(level="3")] #[assoc(side="left")]
+    <l:Expr> "*" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Mul, r))),
+    <l:Expr> "/" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Div, r))),
+    <l:Expr> "%" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Mod, r))),
+
+    #[precedence(level="4")] #[assoc(side="left")]
+    <l:Expr> "+" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Add, r))),
+    <l:Expr> "-" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Sub, r))),
+
+    #[precedence(level="5")] #[assoc(side="left")]
+    <l:Expr> "==" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Eq, r))),
+    <l:Expr> "!=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Ne, r))),
+    <l:Expr> "<" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Lt, r))),
+    <l:Expr> "<=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Le, r))),
+    <l:Expr> ">" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Gt, r))),
+    <l:Expr> ">=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Ge, r))),
+
+    #[precedence(level="6")] #[assoc(side="left")]
+    "not" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Not, e))),
+
+    #[precedence(level="7")] #[assoc(side="left")]
+    <l:Expr> "and" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::And, r))),
+    <l:Expr> "or" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Or, r))),
+
 }
 
 

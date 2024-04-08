@@ -1,0 +1,16 @@
+
+https = external js "https.js"
+process = external js "process.js"
+promise = external js "promise.js"
+
+fetch_weather_data = fn (city, api_key) {
+    resolve, reject = with promise.new
+    promise.new(fn (resolve, reject) {
+	url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+	https.get(url, fn (res) {
+	    
+	})
+    })
+}
+

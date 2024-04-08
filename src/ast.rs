@@ -25,8 +25,9 @@ pub enum ExprValue {
     StringLiteral(String),
     Identifier(String),
     Number(i32),
-    Op(Box<Expr>, Opcode, Box<Expr>),
-    FunCall(String, Vec<Box<Arg>>),
+    BinOp(Box<Expr>, BinOp, Box<Expr>),
+    UnOp(UnOp, Box<Expr>),
+    Apply(String, Vec<Arg>),
 }
 
 #[derive(Clone,Debug)]
@@ -73,11 +74,35 @@ pub struct FunDef {
 }
 
 #[derive(Clone,Debug)]
-pub enum Opcode {
+pub enum UnOp {
+    Not,
+    Neg,
+    Pos 
+}
+
+#[derive(Clone,Debug)]
+pub enum BinOp {
+    // Arithmetic
     Add,
     Sub,
     Mul,
     Div,
+    Mod,
+
+    // Logical
+    And,
+    Or,
+
+    // Comparison
+    Eq,
+    Ne,
+    Lt,
+    Gt,
+    Ge,
+    Le,
+
+    // Member access
+    Dot,
 }
 
 #[derive(Clone,Debug)]
@@ -131,3 +156,4 @@ impl Block {
         }
     }
 }
+
