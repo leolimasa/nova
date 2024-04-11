@@ -1,0 +1,31 @@
+
+Response = type alias {
+    code: Int,
+    body: Stream(String),
+}
+
+GetError = type
+    Timeout
+    InvalidUrl
+
+ext_get = external fn(url: String): Response
+    js "http.js" "get"
+    go "http.go" "get"
+
+ext_post = external fn(url: String): Result(Response)
+    js "http.js" "get"
+    go "http.go" "get"
+
+request = effect fn (method: String, url: String): Response/Exception(GetError)
+    # This is the default implementation
+    if method == "post" then
+       resp = ext_post(url)
+       if Error(e) == resp then
+           raise(e)
+    if method == "get"
+       resp = ext_get(url)
+       if Error(e) == resp then
+           raise(e)
+
+get = fn (url) request("get", url)
+post = fn (url) request("post", url)

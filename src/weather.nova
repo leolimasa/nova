@@ -1,16 +1,41 @@
 
-https = external js "https.js"
-process = external js "process.js"
-promise = external js "promise.js"
+# https_get will return the full response instead of chunked
+https_get = external js "https.js" "get"
 
-fetch_weather_data = fn (city, api_key) {
-    resolve, reject = with promise.new
-    promise.new(fn (resolve, reject) {
-	url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+process_argv = external fn (i: Int): String
+    js "process.js" "argv"
+    go "process.go" "argv"
 
-	https.get(url, fn (res) {
-	    
-	})
-    })
-}
+Promise = type alias {}
 
+promise_new = external fn (): (fn(Promise), fn(Promise)) 
+    js "promise.js" "new"
+
+promise_await = external fn (Promise):Nil 
+    js "promise.js" "await"
+
+fetch_weather_data = fn (city, api_key)
+    resolve, reject = wrap promise_new
+
+    url = "https://api.openweathermap.org/data/2.5/weather?q="
+        <> city
+	<> "&appid="+api_key
+	<> "&units=metric"
+
+    res = wrap https_get(url, fn (e)
+    	console.log(e)
+	reject(e))
+
+    parsed_data = JSON.parse(res)
+    parsed_data
+
+main = fn ()
+    api_key = "KEY_HERE"
+    city = process_argv(2)
+
+    if not city
+    	console.log("Please provide a city as an argument")
+	return
+
+    data = with promise_await(fetch_weather_data())
+    console.log("Current temperature in " + city + " is " + data.main.temp)

@@ -1,0 +1,29 @@
+import http
+import nova/process
+import json
+import io
+
+fetch_weather_data = fn (city, api_key)
+    url = "https://api.openweathermap.org/data/2.5/weather?q="
+        ++ city
+	++ "&appid=" ++ api_key
+	++ "&units=metric"
+    res = https.get(url)
+    return res
+
+main = fn ()
+    api_key = "KEY_HERE"
+    city = process.argv(2) 
+    data = fetch_weather_data(city, api_key)
+    temp = data["main"]["temp"]
+    console.log("Current temperature in " + city + " is " + data.main.temp)
+
+    handle
+	IndexNotFound(i) on city
+	    io.println("Second argument is required with a city")
+	KeyError(k) on temp
+	    io.println("Invalid JSON response")
+    	Exception(e) 
+	    io.println(e)
+	    
+	    
