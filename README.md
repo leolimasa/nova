@@ -26,6 +26,6 @@ Easy to write, easy to read, hard to break. A new programming language.
 # Future
 
 * [ ] JS stdlib
-* [ ] C code generator
+* [ ] C code generator with https://www.ravenbrook.com/project/mps/
 * [ ] C stdlib
 * [ ] WASM with wasmgc and wasmer for binary builds
