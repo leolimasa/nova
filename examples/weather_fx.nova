@@ -5,9 +5,9 @@ import io
 
 fetch_weather_data = fn (city, api_key)
     url = "https://api.openweathermap.org/data/2.5/weather?q="
-        ++ city
-	++ "&appid=" ++ api_key
-	++ "&units=metric"
+        + city
+	+ "&appid=" + api_key
+	+ "&units=metric"
     res = https.get(url)
     return res
 
@@ -16,7 +16,7 @@ main = fn ()
     city = process.argv(2) 
     data = fetch_weather_data(city, api_key)
     temp = data["main"]["temp"]
-    console.log("Current temperature in " + city + " is " + data.main.temp)
+    console.log("Current temperature in " + city + " is " + temp)
 
     handle
 	IndexNotFound(i) on city

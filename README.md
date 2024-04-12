@@ -7,17 +7,25 @@ Easy to write, easy to read, hard to break. A new programming language.
 * [ ] tuple destructuring
 * [ ] `if` statements
 * [ ] `external` statements
+* [ ] array accessors
 * [ ] comments
 * [ ] custom lexer for indentation and newlines
-* [ ] JS untyped code gen
+* [ ] JS untyped code gen / nova IR
 * [ ] type annotations
 * [ ] HM type inference
-* [ ] Go code gen
 
 # Types
 
 * [ ] Generics
 * [ ] Row types
-* [ ] Algebraic effects
+* [ ] Algebraic effects via JS yield
+* [ ] Polymorphic variants
 * [ ] `handle` keyword
 * [ ] Overloading, maybe?
+
+# Future
+
+* [ ] JS stdlib
+* [ ] C code generator
+* [ ] C stdlib
+* [ ] WASM with wasmgc and wasmer for binary builds
