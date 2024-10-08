@@ -1,31 +1,38 @@
 # nova
 Easy to write, easy to read, hard to break. A new programming language.
 
-# Short term TODO
+# build the IR
 
-* [ ] `wrap` statements
-* [ ] tuple destructuring
+* [ ] IR spec
+* [ ] IR parser
+
+* [ ] type annotations
+* [ ] basic compile to WASM
+* [ ] print() with WASI
 * [ ] `if` statements
-* [ ] `external` statements
+* [ ] tuple destructuring
 * [ ] array accessors
 * [ ] comments
 * [ ] custom lexer for indentation and newlines
-* [ ] JS untyped code gen / nova IR
 * [ ] type annotations
+
+# build WASM compiler for IR
+
+# Basic Types
+
 * [ ] HM type inference
-
-# Types
-
 * [ ] Generics
 * [ ] Row types
-* [ ] Algebraic effects via JS yield
 * [ ] Polymorphic variants
+
+# Advanced types
+
+* [ ] Lexically scoped Algebraic effects
 * [ ] `handle` keyword
 * [ ] Overloading, maybe?
 
 # Future
 
-* [ ] JS stdlib
-* [ ] C code generator with https://www.ravenbrook.com/project/mps/
-* [ ] C stdlib
-* [ ] WASM with wasmgc and wasmer for binary builds
+* [ ] stdlib (hashmaps, lists, etc)
+* [ ] 
+

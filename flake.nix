@@ -26,6 +26,11 @@
               # Add your dependencies here
               rustup
               cargo
+              rust-analyzer
+              # wabt
+              nodejs_22
+              wasm-tools
+              http-server
             ]; 
 
             shellHook = ''

@@ -1,0 +1,19 @@
+<!-- Loads array.wasm and runs its main function -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Array</title>
+  </head>
+  <body>
+    <script>
+      fetch('array.wasm')
+	.then(response => response.arrayBuffer())
+	.then(bytes => {
+	  return WebAssembly.instantiate(bytes, {})
+	})
+	.then(results => {
+	  const { main } = results.instance.exports;
+	  main();
+	});
+    </script>
+  </body>
