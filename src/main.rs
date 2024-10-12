@@ -1,5 +1,9 @@
 use lalrpop_util::lalrpop_mod;
 mod ast;
+mod ir {
+  pub mod ast;
+  pub mod parser;
+}
 
 lalrpop_mod!(pub grammar);
 

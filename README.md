@@ -1,18 +1,20 @@
 # nova
 Easy to write, easy to read, hard to break. A new programming language.
 
+Loose thread: while writing the test_arithmetic_ops, it looks like the order of operations for mult and add is wrong. Check that. Also come up with helper functions to generate ast enums a bit easier.
+
 ## IR
 
 * [X] Write spec
 * [ ] Minimum Viable Compiler: simple expressions, functions, export, extern
   * [ ] Parser
-    * [ ] Module 
     * [ ] Expressions (literals (except arrays, struct)) + operators (except dot))
     * [ ] Block (expression + return)
     * [ ] Function declaration
     * [ ] Export
+    * [ ] Module 
   * [ ] WASM compiler
-    * [ ] Expressions (literals + operators)
+    * [ ] Expressions (number + operators)
     * [ ] Block
     * [ ] Functions
     * [ ] Export
