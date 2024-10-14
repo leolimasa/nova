@@ -4,6 +4,9 @@ mod ir {
   pub mod ast;
   pub mod parser;
 }
+mod compiler {
+  pub mod wasm;
+}
 
 lalrpop_mod!(pub grammar);
 

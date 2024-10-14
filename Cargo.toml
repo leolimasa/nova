@@ -10,3 +10,5 @@ lalrpop = "0.20.2"
 
 [dependencies]
 lalrpop-util = { version = "0.20.2", features = ["lexer", "unicode"] }
+wasm-encoder = "0.219.1"
+wasmtime = "25.0.2"

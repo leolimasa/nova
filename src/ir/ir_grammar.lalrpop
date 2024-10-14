@@ -6,7 +6,7 @@ grammar;
 // ----------------------------------------------------------------------------
 // Expression
 // ----------------------------------------------------------------------------
-pub Expr: Box<Expr> = {
+pub Expr: Expr = {
 //    #[precedence(level="0")]
 //    Term,
 //    <name:Identifier> "(" <args:Comma<Arg>> ")" => Box::new(Expr::new(ExprValue::Apply(name, args))),
@@ -15,53 +15,53 @@ pub Expr: Box<Expr> = {
     #[precedence(level="0")]
     Term,
 
-    #[precedence(level="1")] #[assoc(side="left")]
-    <l:Expr> "." <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Dot, r))),
+    // #[precedence(level="1")] #[assoc(side="left")]
+    // <l:Expr> "." <r:Expr> => binop(&l, &BinOp::Dot, &r),
 
-    #[precedence(level="2")] #[assoc(side="left")]
-    "-" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Neg, e))),
-    "+" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Pos, e))),
+    // #[precedence(level="2")] #[assoc(side="left")]
+    // "-" <e:Expr> => unop(UnOp::Neg, e),
+    // "+" <e:Expr> => unop(UnOp::Pos, e),
 
     #[precedence(level="3")] #[assoc(side="left")]
-    <l:Expr> "*" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Mul, r))),
-    <l:Expr> "/" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Div, r))),
-    <l:Expr> "%" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Mod, r))),
+    <l:Expr> "*" <r:Expr> => binop(&l, &BinOp::Mul, &r),
+    <l:Expr> "/" <r:Expr> => binop(&l, &BinOp::Div, &r),
+    <l:Expr> "%" <r:Expr> => binop(&l, &BinOp::Mod, &r),
 
     #[precedence(level="4")] #[assoc(side="left")]
-    <l:Expr> "+" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Add, r))),
-    <l:Expr> "-" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Sub, r))),
+    <l:Expr> "+" <r:Expr> => binop(&l, &BinOp::Add, &r),
+    <l:Expr> "-" <r:Expr> => binop(&l, &BinOp::Sub, &r),
 
     #[precedence(level="5")] #[assoc(side="left")]
-    <l:Expr> "==" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Eq, r))),
-    <l:Expr> "!=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Ne, r))),
-    <l:Expr> "<" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Lt, r))),
-    <l:Expr> "<=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Le, r))),
-    <l:Expr> ">" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Gt, r))),
-    <l:Expr> ">=" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Ge, r))),
+    <l:Expr> "==" <r:Expr> => binop(&l, &BinOp::Eq, &r),
+    <l:Expr> "!=" <r:Expr> => binop(&l, &BinOp::Ne, &r),
+    <l:Expr> "<" <r:Expr> => binop(&l, &BinOp::Lt, &r),
+    <l:Expr> "<=" <r:Expr> => binop(&l, &BinOp::Le, &r),
+    <l:Expr> ">" <r:Expr> => binop(&l, &BinOp::Gt, &r),
+    <l:Expr> ">=" <r:Expr> => binop(&l, &BinOp::Ge, &r),
 
     #[precedence(level="6")] #[assoc(side="left")]
-    "not" <e:Expr> => Box::new(Expr::new(ExprValue::UnOp(UnOp::Not, e))),
+    "not" <e:Expr> => unop(&UnOp::Not, &e),
 
     #[precedence(level="7")] #[assoc(side="left")]
-    <l:Expr> "and" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::And, r))),
-    <l:Expr> "or" <r:Expr> => Box::new(Expr::new(ExprValue::BinOp(l, BinOp::Or, r))),
+    <l:Expr> "and" <r:Expr> => binop(&l, &BinOp::And, &r),
+    <l:Expr> "or" <r:Expr> => binop(&l, &BinOp::Or, &r),
 
 }
 
-Term: Box<Expr> = { 
-    Int => Box::new(Expr::new(ExprValue::Int(<>))), 
-    Float => Box::new(Expr::new(ExprValue::Float(<>))),
-    Identifier => Box::new(Expr::new(ExprValue::Identifier(<>))),
-    StringLiteral => Box::new(Expr::new(ExprValue::StringLiteral(<>))),
+Term: Expr = { 
+    Int => Expr::Int(<>), 
+    Float => Expr::Float(<>),
+    // Identifier => Expr::Identifier(<>),
+    // StringLiteral => Expr::StringLiteral(<>),
     "(" <Expr> ")",
-    Boolean => Box::new(Expr::new(ExprValue::Boolean(<>)))
+    Boolean => Expr::Boolean(<>)
 };
 
 
 // ----------------------------------------------------------------------------
 // Terminals
 // ----------------------------------------------------------------------------
-Int: i64 = <s:r"[0-9]+"> => i64::from_str(s).unwrap();
+Int: i64 = <s:r"-?[0-9]+"> => i64::from_str(s).unwrap();
 
 Boolean: bool = {
 	"true" => true,
@@ -70,7 +70,7 @@ Boolean: bool = {
 
 StringLiteral: String = <s:r#""[^"]*""#> => s[1..s.len()-1].to_string();
 
-Float: f64 = <f:r"[0-9]+(\.[0-9]*)+"> => f64::from_str(f).unwrap();
+Float: f64 = <f:r"-?[0-9]+(\.[0-9]*)+"> => f64::from_str(f).unwrap();
 
 Identifier: String = <s:r"[a-zA-Z_][a-zA-Z0-9_]*"> => s.to_string();
 

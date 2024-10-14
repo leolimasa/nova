@@ -6,9 +6,9 @@ Loose thread: while writing the test_arithmetic_ops, it looks like the order of 
 ## IR
 
 * [X] Write spec
-* [ ] Minimum Viable Compiler: simple expressions, functions, export, extern
-  * [ ] Parser
-    * [ ] Expressions (literals (except arrays, struct)) + operators (except dot))
+* [.] Minimum Viable Compiler: simple expressions, functions, export, extern
+  * [.] Parser
+    * [X] Expressions (literals (except arrays, struct, strings)) + operators (except dot))
     * [ ] Block (expression + return)
     * [ ] Function declaration
     * [ ] Export
@@ -18,6 +18,10 @@ Loose thread: while writing the test_arithmetic_ops, it looks like the order of 
     * [ ] Block
     * [ ] Functions
     * [ ] Export
+    * [ ] Module
+* [ ] Strings
+    * [ ] Parser
+    * [ ] WASM
 * [ ] Assignment (minus arrays and structs) and Identifiers
     * [ ] Parser: assignment expression
     * [ ] WASM
