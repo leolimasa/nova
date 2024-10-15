@@ -1,12 +1,19 @@
+use std::collections::HashMap;
+
 use wasm_encoder::{
     CodeSection, ExportKind, ExportSection, Function, FunctionSection, Instruction,
     Module, TypeSection, ValType,
 };
 
 use crate::ir::ast::{
-    unwrap_typed_expr, Expr, BinOp, UnOp, Type
+    Expr, BinOp, UnOp, Type
 };
 
+use crate::ir::parser::{
+    annotate_types, parse_expr, unwrap_typed_expr, TypeError
+};
+
+#[derive(Debug)]
 pub enum WasmCompileError {
     UntypedExpr(Expr),
     BinopNotSupportedForType(BinOp, Expr),
@@ -147,8 +154,67 @@ pub fn module_from_expr(expr: &Expr) -> Result<Module, WasmCompileError> {
     for instr in instructions {
         f.instruction(&instr);
     }
+    f.instruction(&Instruction::End);
     codes.function(&f);
     module.section(&codes);
 
     Ok(module)
 }
+
+#[derive(Debug)]
+pub enum RunExprError {
+    ParseError(String),
+    TypeAnnotationError(TypeError),
+    WasmCompileError(WasmCompileError),
+    WasmtimeError(wasmtime::Error),
+}
+
+pub fn run_expr<T>(expr: Box<Expr>) -> Result<T, RunExprError>
+    where T: wasmtime::WasmResults {
+        let typed_expr = annotate_types(&HashMap::new(), &expr)
+            .or_else(|e| Err(RunExprError::TypeAnnotationError(e)))?;
+
+        let module = module_from_expr(&typed_expr)
+            .or_else(|e| Err(RunExprError::WasmCompileError(e)))?;
+
+        let wasm_bytes = module.finish();
+
+        let engine = wasmtime::Engine::default();
+        let wt_module = wasmtime::Module::new(&engine, &wasm_bytes)
+            .or_else(|e| Err(RunExprError::WasmtimeError(e)))?;
+
+        // the store contains stuff from the host
+        let mut store = wasmtime::Store::new(&engine, ());
+
+        // instantiate the module
+        let instance = wasmtime::Instance::new(&mut store, &wt_module, &[])
+            .or_else(|e| Err(RunExprError::WasmtimeError(e)))?;
+
+        // get the `main` function from the module and call it
+        let main = instance.get_typed_func::<(), T>(&mut store, "main")
+            .or_else(|e| Err(RunExprError::WasmtimeError(e)))?;
+
+        let result = main.call(&mut store, ())
+            .or_else(|e| Err(RunExprError::WasmtimeError(e)))?;
+
+        Ok(result)
+}
+
+pub fn run_expr_str<T>(expr_str: &str) -> Result<T, RunExprError>
+    where T: wasmtime::WasmResults {
+        let expr = parse_expr(expr_str)
+            .or_else(|e| Err(RunExprError::ParseError(e)))?;
+        run_expr(Box::new(expr))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_compile_expr() {
+        let result = run_expr_str::<f64>("1 + 2.5 * 3 - 4 / 2").unwrap();
+        assert_eq!(result, 6.5);
+    }
+}
+
