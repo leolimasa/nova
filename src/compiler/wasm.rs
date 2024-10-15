@@ -212,9 +212,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_compile_expr() {
+    fn test_arit_expr() {
         let result = run_expr_str::<f64>("1 + 2.5 * 3 - 4 / 2").unwrap();
         assert_eq!(result, 6.5);
+    }
+
+    #[test]
+    fn test_bool_expr() {
+        let result = run_expr_str::<i32>("1 < 2 and 3 > 2").unwrap();
+        assert_eq!(result, 1);
     }
 }
 
