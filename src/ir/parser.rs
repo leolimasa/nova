@@ -56,6 +56,12 @@ pub fn annotate_types(ctx: &HashMap<&str, Type>, expr: &Expr) -> Result<Expr, Ty
                     return Err(TypeError::TypeMismatch(expr.clone(), ltype, rtype));
                 }
             }
+
+            // If binop is comparison, resulting type will always be boolean
+            if *op == BinOp::Eq || *op == BinOp::Ne || *op == BinOp::Lt || *op == BinOp::Gt || *op == BinOp::Ge || *op == BinOp::Le {
+                result_type = Type::Boolean;
+            }
+
             Ok(Expr::TypedExpr(result_type, Box::new(binop(&ltyped, &op, &rtyped))))
         },
         Expr::UnOp(op, r) => {

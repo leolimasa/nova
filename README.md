@@ -6,15 +6,15 @@ Loose thread: the bool test for expression is failing. Fix it.
 ## IR
 
 * [X] Write spec
-* [.] Minimum Viable Compiler: simple expressions, functions, export, extern
-  * [.] Parser
+* [o] Minimum Viable Compiler: simple expressions, functions, export, extern
+  * [X] Parser
     * [X] Expressions (literals (except arrays, struct, strings)) + operators (except dot))
-    * [ ] Block (expression + return)
-    * [ ] Function declaration
-    * [ ] Export
-    * [ ] Module 
-  * [ ] WASM compiler
-    * [ ] Expressions (number + operators)
+    * [X] Block (expression + return)
+    * [X] Function declaration
+    * [X] Export
+    * [X] Module 
+  * [.] WASM compiler
+    * [X] Expressions (number + operators)
     * [ ] Block
     * [ ] Functions
     * [ ] Export
@@ -22,7 +22,7 @@ Loose thread: the bool test for expression is failing. Fix it.
 * [ ] Strings
     * [ ] Parser
     * [ ] WASM
-* [ ] Assignment (minus arrays and structs) and Identifiers
+* [ ] Assignment (minus arrays and structs) and expression variables
     * [ ] Parser: assignment expression
     * [ ] WASM
 * [ ] Function calls
@@ -45,10 +45,13 @@ Loose thread: the bool test for expression is failing. Fix it.
     * [ ] WASM: struct declaration
     * [ ] WASM: struct access
     * [ ] WASM: struct assignment
+* [ ] Bool expr short circuiting
+* [ ] Remove int to float autocast
 
 ## Main language
 
 * [ ] Write spec
+* [ ] Parser
 
 ## Basic Types
 
@@ -68,3 +71,9 @@ Loose thread: the bool test for expression is failing. Fix it.
 * [ ] stdlib (hashmaps, lists, etc)
 * [ ] executable compiler (using cranelift or wasmtime somehow)
 
+* Heading
+* Vertical Speed
+* Altitude
+* Speed
+* Radio
+* Map zoom

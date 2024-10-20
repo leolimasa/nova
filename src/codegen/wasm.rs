@@ -53,7 +53,18 @@ pub fn compile_expr<'a>(typed_expr: Box<Expr>) -> Result<Vec<Instruction<'a>>, W
                 instructions.push(Instruction::F64ConvertI64S)
             }
 
-            match expr_type {
+            // Identify the operation type based on the type of the left and right hand expressions. 
+            // If one is float and the other is int, it will be float.
+            // If both are bool, it will be bool. If both are int, it will be int.
+            let mut op_type = ltype.clone();
+            if ltype == Type::Float || rtype == Type::Float {
+                op_type = Type::Float;
+            } else if ltype == Type::Boolean && rtype == Type::Boolean {
+                op_type = Type::Boolean;
+            }
+
+
+            match op_type {
                 Type::Int => {
                     instructions.extend(match op {
                         BinOp::Add => vec![Instruction::I64Add],
@@ -93,6 +104,8 @@ pub fn compile_expr<'a>(typed_expr: Box<Expr>) -> Result<Vec<Instruction<'a>>, W
                         BinOp::Le => vec![Instruction::I32LeS],
                         BinOp::Gt => vec![Instruction::I32GtS],
                         BinOp::Ge => vec![Instruction::I32GeS],
+                        BinOp::And => vec![Instruction::I32And],
+                        BinOp::Or => vec![Instruction::I32Or],
                         _ => Err(WasmCompileError::BinopNotSupportedForType(op, *typed_expr.clone()))?,
                     });
                 }
@@ -215,12 +228,27 @@ mod tests {
     fn test_arit_expr() {
         let result = run_expr_str::<f64>("1 + 2.5 * 3 - 4 / 2").unwrap();
         assert_eq!(result, 6.5);
+
+        let result = run_expr_str::<i64>("(1+2)*3").unwrap();
+        assert_eq!(result, 9);
     }
 
     #[test]
     fn test_bool_expr() {
+        let result = run_expr_str::<i32>("1 < 2").unwrap();
+        assert_eq!(result, 1);
+
         let result = run_expr_str::<i32>("1 < 2 and 3 > 2").unwrap();
         assert_eq!(result, 1);
+
+        let result = run_expr_str::<i32>("1 > 2 and 3 > 2").unwrap();
+        assert_eq!(result, 0);
+
+        let result = run_expr_str::<i32>("1 < 2 or 3 < 2").unwrap();
+        assert_eq!(result, 1);
+
+        let result = run_expr_str::<i32>("1 > 2 or 3 < 2").unwrap();
+        assert_eq!(result, 0);
     }
 }
 

@@ -1,5 +1,6 @@
 use std::str::FromStr;
 use crate::ir::ast::{*};
+use lalrpop_util::ParseError;
 
 grammar;
 
@@ -57,6 +58,51 @@ Term: Expr = {
     Boolean => Expr::Boolean(<>)
 };
 
+// ----------------------------------------------------------------------------
+// Block
+// ----------------------------------------------------------------------------
+
+Block: Block = {
+    "{" <statements:Statement*> "}" => Block::new(<>),
+};
+
+Statement: Statement = {
+    <Expr> ";" => Statement::Expr(<>),
+    "return" <Expr> ";" => Statement::Return(<>)
+};
+
+// ----------------------------------------------------------------------------
+// Type
+// ----------------------------------------------------------------------------
+
+Type: Type = <t:Identifier> =>? match t.as_str() {
+	"int"=> Ok(Type::Int),
+	"float"=> Ok(Type::Float),
+	"boolean"=> Ok(Type::Boolean),
+	_ => Err(ParseError::User { error: "type not suported" })
+};
+
+
+// ----------------------------------------------------------------------------
+// Function 
+// ----------------------------------------------------------------------------
+
+TypedIdent: TypedIdent = <name:Identifier> ":" <t:Type> => TypedIdent { name, type_: t };
+
+Function: Function = 
+    "fun" <name:Identifier> "(" <args:Comma<TypedIdent>> ")" ":" <return_type:Type> <body:Block> => Function {
+	name, args, return_type, body	
+    };
+
+// ----------------------------------------------------------------------------
+// Module 
+// ----------------------------------------------------------------------------
+
+ModuleStatement: ModuleStatement = {
+    "export" <name:Identifier> <fname:Identifier> ";" => ModuleStatement::Export(name, fname),
+    <f:Function> => ModuleStatement::FunctionDeclaration(f)
+
+}
 
 // ----------------------------------------------------------------------------
 // Terminals

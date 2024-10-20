@@ -4,7 +4,7 @@ mod ir {
   pub mod ast;
   pub mod parser;
 }
-mod compiler {
+mod codegen {
   pub mod wasm;
 }
 
