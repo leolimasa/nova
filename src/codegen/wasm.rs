@@ -6,7 +6,7 @@ use wasm_encoder::{
 };
 
 use crate::ir::ast::{
-    Expr, BinOp, UnOp, Type
+    Expr, BinOp, UnOp, Type, Block, Statement
 };
 
 use crate::ir::parser::{
@@ -218,6 +218,27 @@ pub fn run_expr_str<T>(expr_str: &str) -> Result<T, RunExprError>
         let expr = parse_expr(expr_str)
             .or_else(|e| Err(RunExprError::ParseError(e)))?;
         run_expr(Box::new(expr))
+}
+
+
+pub fn compile_block(block: Box<Block>) -> Result<Vec<Instruction>, WasmCompileError> {
+    let mut instructions = vec![];
+    for statement in block.statements {
+        match statement {
+            Statement::Expr(expr) => {
+                instructions.extend(compile_expr(Box::new(expr))?);
+
+                // Drop the result of the expression if it returns anything
+                match expr.type_() {
+                    Type::Int => instructions.push(Instruction::Drop),
+                    Type::Float => instructions.push(Instruction::Drop),
+                    Type::Boolean => instructions.push(Instruction::Drop),
+                }
+
+            },
+        }
+    }
+    Ok(instructions)
 }
 
 #[cfg(test)]

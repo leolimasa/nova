@@ -1,0 +1,19 @@
+import http
+import error on_error
+
+fetch_weather_data = (city, api_key) =>
+    url = "https://api.openweathermap.org/data/2.5/weather?q="
+        + city
+	+ "&appid=" + api_key
+	+ "&units=metric"
+    http.get(url)
+
+main = () =>
+    api_key = "KEY_HERE"
+    city = process.argv(2) 
+    data = fetch_weather_data(city, api_key)
+    temp = data["main"]["temp"]
+    print("Current temperature in " + city + " is " + temp)
+
+    wrap
+        city: 

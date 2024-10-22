@@ -39,6 +39,7 @@ pub enum Type {
     Float,
     // String,
     Boolean,
+    Nothing,
 }
 
 #[derive(Clone, Debug, PartialEq)]
