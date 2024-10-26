@@ -5,15 +5,16 @@ Loose thread: the bool test for expression is failing. Fix it.
 
 ## Language Canary
 
-* [ ] Minimum Viable Compiler: simple expressions, functions 
-    * [ ] Parser
-        * [ ] Move IR to be default implementation
-        * [ ] Add loc fields to AST
-        * [ ] Change function declaration to function operator (=>)
+* [.] Minimum Viable Compiler: simple expressions, functions 
+    * [o] Parser
+        * [X] Move IR to be default implementation
+        * [X] Add loc fields to AST
+        * [ ] Change lalrpop to pass things by ref
+        * [X] Change function declaration to function operator (=>)
+        * [X] Move annotate_types to the typing module
         * [ ] Remove implicit type casts for float and int
-        * [ ] Move annotate_types to the typing module
-        * [ ] Change expr to take type as a struct field
-        * [ ] Require type annotations for function arguments
+        * [X] Change expr to take type as a struct field
+        * [X] Require type annotations for function arguments
         * [ ] Function calls
     * [ ] LLVM compiler
         * [ ] Expressions (literals and operators, except arrays, struct, and strings)
@@ -22,6 +23,7 @@ Loose thread: the bool test for expression is failing. Fix it.
         * [ ] Function calls
         * [ ] JIT compilation for tests
         * [ ] Native compilation
+* [ ] remove wasm rust libs
 * [ ] Integrate libc / musl
 * [ ] Integrate boehm or another GC
 * [ ] Strings

@@ -7,6 +7,7 @@ grammar;
 // ----------------------------------------------------------------------------
 // Expression
 // ----------------------------------------------------------------------------
+
 pub Expr: Expr = {
 //    #[precedence(level="0")]
 //    Term,
@@ -24,38 +25,40 @@ pub Expr: Expr = {
     // "+" <e:Expr> => unop(UnOp::Pos, e),
 
     #[precedence(level="3")] #[assoc(side="left")]
-    <l:Expr> "*" <r:Expr> => binop(&l, &BinOp::Mul, &r),
-    <l:Expr> "/" <r:Expr> => binop(&l, &BinOp::Div, &r),
-    <l:Expr> "%" <r:Expr> => binop(&l, &BinOp::Mod, &r),
+    <start:@L> <l:Expr> "*" <r:Expr> <end:@R> => binop(&l, &BinOp::Mul, &r, start, end),
+    <start:@L> <l:Expr> "/" <r:Expr> <end:@R> => binop(&l, &BinOp::Div, &r, start, end),
+    <start:@L> <l:Expr> "%" <r:Expr> <end:@R> => binop(&l, &BinOp::Mod, &r, start, end),
 
     #[precedence(level="4")] #[assoc(side="left")]
-    <l:Expr> "+" <r:Expr> => binop(&l, &BinOp::Add, &r),
-    <l:Expr> "-" <r:Expr> => binop(&l, &BinOp::Sub, &r),
+    <start:@L> <l:Expr> "+" <r:Expr> <end:@R> => binop(&l, &BinOp::Add, &r, start, end),
+    <start:@L> <l:Expr> "-" <r:Expr> <end:@R> => binop(&l, &BinOp::Sub, &r, start, end),
 
     #[precedence(level="5")] #[assoc(side="left")]
-    <l:Expr> "==" <r:Expr> => binop(&l, &BinOp::Eq, &r),
-    <l:Expr> "!=" <r:Expr> => binop(&l, &BinOp::Ne, &r),
-    <l:Expr> "<" <r:Expr> => binop(&l, &BinOp::Lt, &r),
-    <l:Expr> "<=" <r:Expr> => binop(&l, &BinOp::Le, &r),
-    <l:Expr> ">" <r:Expr> => binop(&l, &BinOp::Gt, &r),
-    <l:Expr> ">=" <r:Expr> => binop(&l, &BinOp::Ge, &r),
+    <start:@L> <l:Expr> "==" <r:Expr> <end:@R> => binop(&l, &BinOp::Eq, &r, start, end),
+    <start:@L> <l:Expr> "!=" <r:Expr> <end:@R> => binop(&l, &BinOp::Ne, &r, start, end),
+    <start:@L> <l:Expr> "<" <r:Expr> <end:@R> => binop(&l, &BinOp::Lt, &r, start, end),
+    <start:@L> <l:Expr> "<=" <r:Expr> <end:@R> => binop(&l, &BinOp::Le, &r, start, end),
+    <start:@L> <l:Expr> ">" <r:Expr> <end:@R> => binop(&l, &BinOp::Gt, &r, start, end),
+    <start:@L> <l:Expr> ">=" <r:Expr> <end:@R> => binop(&l, &BinOp::Ge, &r, start, end),
 
     #[precedence(level="6")] #[assoc(side="left")]
-    "not" <e:Expr> => unop(&UnOp::Not, &e),
+    <start:@L> "not" <e:Expr> <end:@R> => unop(&UnOp::Not, &e, start, end),
 
     #[precedence(level="7")] #[assoc(side="left")]
-    <l:Expr> "and" <r:Expr> => binop(&l, &BinOp::And, &r),
-    <l:Expr> "or" <r:Expr> => binop(&l, &BinOp::Or, &r),
+    <start:@L> <l:Expr> "and" <r:Expr> <end:@R> => binop(&l, &BinOp::And, &r, start, end),
+    <start:@L> <l:Expr> "or" <r:Expr> <end:@R> => binop(&l, &BinOp::Or, &r, start, end),
 
 }
 
 Term: Expr = { 
-    Int => Expr::Int(<>), 
-    Float => Expr::Float(<>),
+    <start:@L> <v:Int> <end:@R> => 
+    	Expr::new(None, ExprValue::Int(v), start, end), 
+    <start:@L> <v:Float> <end:@R> => 
+    	Expr::new(None, ExprValue::Float(v), start, end),
     // Identifier => Expr::Identifier(<>),
     // StringLiteral => Expr::StringLiteral(<>),
     "(" <Expr> ")",
-    Boolean => Expr::Boolean(<>)
+    <start:@L> <v:Boolean> <end:@R> => Expr::new(None, ExprValue::Boolean(v), start, end)
 };
 
 // ----------------------------------------------------------------------------
@@ -63,7 +66,8 @@ Term: Expr = {
 // ----------------------------------------------------------------------------
 
 Block: Block = {
-    "{" <statements:Statement*> "}" => Block::new(<>),
+    <start:@L> "{" <statements:Statement*> "}" <end:@R> => 
+    	block(statements, start, end)
 };
 
 Statement: Statement = {
@@ -76,9 +80,9 @@ Statement: Statement = {
 // ----------------------------------------------------------------------------
 
 Type: Type = <t:Identifier> =>? match t.as_str() {
-	"int"=> Ok(Type::Int),
-	"float"=> Ok(Type::Float),
-	"boolean"=> Ok(Type::Boolean),
+	"Int"=> Ok(Type::Int),
+	"Float"=> Ok(Type::Float),
+	"Boolean"=> Ok(Type::Boolean),
 	_ => Err(ParseError::User { error: "type not suported" })
 };
 
@@ -90,18 +94,19 @@ Type: Type = <t:Identifier> =>? match t.as_str() {
 TypedIdent: TypedIdent = <name:Identifier> ":" <t:Type> => TypedIdent { name, type_: t };
 
 Function: Function = 
-    "fun" <name:Identifier> "(" <args:Comma<TypedIdent>> ")" ":" <return_type:Type> <body:Block> => Function {
-	name, args, return_type, body	
-    };
+    <start:@L> "(" <args:Comma<TypedIdent>> ")" ":" <return_type:Type> "=>" <body:Block> <end:@R> => 
+    	Function { None, args, return_type, body, loc: Loc { start, end } };
 
 // ----------------------------------------------------------------------------
 // Module 
 // ----------------------------------------------------------------------------
 
 ModuleStatement: ModuleStatement = {
-    "export" <name:Identifier> <fname:Identifier> ";" => ModuleStatement::Export(name, fname),
-    <f:Function> => ModuleStatement::FunctionDeclaration(f)
-
+    <start:@L> <name:Ident> "=" <f:Function> <end:@R> => 
+    	ModuleStatement {
+		value: ModuleStatementValue::Function(set_fun_name(name, &f)),
+		loc: Loc {start, end}
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -110,8 +115,8 @@ ModuleStatement: ModuleStatement = {
 Int: i64 = <s:r"-?[0-9]+"> => i64::from_str(s).unwrap();
 
 Boolean: bool = {
-	"true" => true,
-	"false" => false
+	"True" => true,
+	"False" => false
 };
 
 StringLiteral: String = <s:r#""[^"]*""#> => s[1..s.len()-1].to_string();

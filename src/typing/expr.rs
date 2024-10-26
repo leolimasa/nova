@@ -1,32 +1,5 @@
-use lalrpop_util::lalrpop_mod;
-use crate::ir::ast::*;
-use std::collections::HashMap;
 
-lalrpop_mod!(pub ir_grammar, "/ir/ir_grammar.rs");
-
-pub fn parse_expr(input: &str) -> Result<Expr, String> {
-    let parser = ir_grammar::ExprParser::new();
-    match parser.parse(input) {
-        Ok(expr) => Ok(expr),
-        Err(e) => Err(format!("{:?}", e)),
-    }
-}
-
-#[derive(Debug)]
-pub enum TypeError {
-    TypeMismatch(Expr, Type, Type),
-    UnknownIdentifier(String, Expr),
-    TypeAnnotationError(Expr),
-}
-
-pub fn unwrap_typed_expr(expr: &Expr) -> Option<(Expr, Type)> {
-    match expr {
-        Expr::TypedExpr(t, e) => Some((*e.clone(), t.clone())),
-        _ => None,
-    }
-}
-
-pub fn annotate_types(ctx: &HashMap<&str, Type>, expr: &Expr) -> Result<Expr, TypeError> {
+pub fn annotate(ctx: &HashMap<&str, Type>, expr: &Expr) -> Result<Expr, TypeError> {
     match expr {
         Expr::Int(_) => Ok(Expr::TypedExpr(Type::Int, Box::new(expr.clone()))),
         Expr::Float(_) => Ok(Expr::TypedExpr(Type::Float, Box::new(expr.clone()))),
@@ -73,4 +46,3 @@ pub fn annotate_types(ctx: &HashMap<&str, Type>, expr: &Expr) -> Result<Expr, Ty
         Expr::TypedExpr(_, _) => Ok(expr.clone()),
     }
 } 
-
