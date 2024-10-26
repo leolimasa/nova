@@ -17,7 +17,7 @@ SomeType = A | B & { a: int, b: string }
 The above means that SomeType will always have `a` and `b` fields, but it can be either A or B. This allows dynamic dispatch to work transparently by adding fields to an existing variable:
 
 ```
-implement_name_print = v => v + { print = self => print(v.name) }
+implement_name_print = v => v + { print = (self) => print(v.name) }
 
 main = () =>
     employee = { name: "John", age: 30 }

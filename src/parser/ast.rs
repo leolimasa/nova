@@ -92,7 +92,7 @@ pub struct Function {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Module {
-    statements: Vec<ModuleStatement>,
+    pub statements: Vec<ModuleStatement>,
 }
 
 #[derive(Clone, Debug, PartialEq)]

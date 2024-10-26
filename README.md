@@ -3,77 +3,70 @@ Easy to write, easy to read, hard to break. A new programming language.
 
 Loose thread: the bool test for expression is failing. Fix it.
 
-## IR
+## Language Canary
 
-* [X] Write spec
-* [o] Minimum Viable Compiler: simple expressions, functions, export, extern
-  * [X] Parser
-    * [X] Expressions (literals (except arrays, struct, strings)) + operators (except dot))
-    * [X] Block (expression + return)
-    * [X] Function declaration
-    * [X] Export
-    * [X] Module 
-  * [.] WASM compiler
-    * [X] Expressions (number + operators)
-    * [ ] Block
-    * [ ] Functions
-    * [ ] Export
-    * [ ] Module
+* [ ] Minimum Viable Compiler: simple expressions, functions 
+    * [ ] Parser
+        * [ ] Move IR to be default implementation
+        * [ ] Add loc fields to AST
+        * [ ] Change function declaration to function operator (=>)
+        * [ ] Remove implicit type casts for float and int
+        * [ ] Move annotate_types to the typing module
+        * [ ] Change expr to take type as a struct field
+        * [ ] Require type annotations for function arguments
+        * [ ] Function calls
+    * [ ] LLVM compiler
+        * [ ] Expressions (literals and operators, except arrays, struct, and strings)
+        * [ ] Block, with expression return
+        * [ ] Function definition
+        * [ ] Function calls
+        * [ ] JIT compilation for tests
+        * [ ] Native compilation
+* [ ] Integrate libc / musl
+* [ ] Integrate boehm or another GC
 * [ ] Strings
     * [ ] Parser
-    * [ ] WASM
+    * [ ] LLVM
 * [ ] Assignment (minus arrays and structs) and expression variables
-    * [ ] Parser: assignment expression
-    * [ ] WASM
-* [ ] Function calls
-    * [ ] Parser: function call expression
-    * [ ] WASM
 * [ ] If statement
-    * [ ] parser
-    * [ ] WASM
 * [ ] Arrays
     * [ ] Parser: array literals
     * [ ] Parser: array access
     * [ ] Parser: array assignment
-    * [ ] WASM: array literals
-    * [ ] WASM: array access
-    * [ ] WASM: array assignment
+    * [ ] LLVM: array literals
+    * [ ] LLVM: array access
+    * [ ] LLVM: array assignment
 * [ ] Structs
     * [ ] Parser: struct declaration
     * [ ] Parser: struct access (dot operator)
     * [ ] Parser: struct assignment
-    * [ ] WASM: struct declaration
-    * [ ] WASM: struct access
-    * [ ] WASM: struct assignment
-* [ ] Bool expr short circuiting
-* [ ] Remove int to float autocast
+    * [ ] LLVM: struct declaration
+    * [ ] LLVM: struct access
+    * [ ] LLVM: struct assignment
 
 ## Main language
 
 * [ ] Write spec
 * [ ] Parser
+    * [ ] Comment support
+    * [ ] Create special tokenizer for indentation
 
 ## Basic Types
 
 * [ ] HM type inference
 * [ ] Generics
-* [ ] Row types
-* [ ] Polymorphic variants
 
 ## Advanced types
 
-* [ ] Lexically scoped Algebraic effects
-* [ ] `handle` keyword
-* [ ] Overloading, maybe?
+* [ ] Row types
+* [ ] Operator overloading based on row types
+* [ ] Polymorphic variants
+* [ ] Lexically scoped Algebraic effects using coroutines
 
 ## Future
 
 * [ ] stdlib (hashmaps, lists, etc)
-* [ ] executable compiler (using cranelift or wasmtime somehow)
+* [ ] repl
+* [ ] WASM language interop
+* [ ] package manager with WASM as common distribution for compiled sources
 
-* Heading
-* Vertical Speed
-* Altitude
-* Speed
-* Radio
-* Map zoom

@@ -1,0 +1,30 @@
+
+
+compile_expr = (expr) =>
+    when expr
+        BinOp(lhs, op, rhs):
+	    instructions = compile_expr(lhs) + compile_expr(rhs)
+
+	    bop = when expr.type
+	        TInt:
+		    when op
+		        Add: I64Add
+			Sub: I64Sub
+			Mul: I64Mul
+		TFloat:
+		    when op
+		        Add: F64Add
+			Sub: F64Sub
+			Mul: F64Mul
+		else:
+		    throw Error(BinopNotSupportedForType(expr))
+
+		instructions + [bop]
+
+	UnOp(op, expr):
+	    ...
+
+	IntConst(i): [I64Const(i)]
+	FloatConst(f): [F64Const(i)]
+	...
+
