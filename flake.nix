@@ -31,6 +31,8 @@
               nodejs_22
               wasm-tools
               http-server
+              clang
+              llvm_18
             ]; 
 
             shellHook = ''

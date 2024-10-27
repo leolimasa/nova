@@ -2,9 +2,10 @@ mod parser {
   pub mod parse;
   pub mod ast;
 }
-// mod codegen {
-//   pub mod wasm;
-// }
+
+ mod codegen {
+   pub mod llvm;
+}
 
 fn main() {
 
