@@ -9,7 +9,7 @@ edition = "2021"
 lalrpop = "0.20.2"
 
 [dependencies]
-inkwell = {"0.5.0", features = ["llvm18"]}
+inkwell = {version = "0.5.0", features = ["llvm18-0"]}
 lalrpop-util = { version = "0.20.2", features = ["lexer", "unicode"] }
-wasm-encoder = "0.219.1"
-wasmtime = "25.0.2"
+# wasm-encoder = "0.219.1"
+# wasmtime = "25.0.2"

@@ -1,8 +1,8 @@
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Loc {
-    pub start: i32,
-    pub end: i32,
+    pub start: usize,
+    pub end: usize,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -53,7 +53,7 @@ pub struct Expr {
     pub value: Box<ExprValue>, 
 }
 
-pub fn expr(type_: Option<Type>, value: ExprValue, start: i32, end: i32) -> Expr {
+pub fn expr(type_: Option<Type>, value: ExprValue, start: usize, end: usize) -> Expr {
     Expr {
         type_,
         loc: Loc { start, end },
@@ -93,7 +93,7 @@ pub struct Block {
     pub loc: Loc,
 }
 
-pub fn block(statements: Vec<Statement>, start: i32, end: i32) -> Block {
+pub fn block(statements: Vec<Statement>, start: usize, end: usize) -> Block {
     Block {
         statements,
         type_: None,
@@ -118,9 +118,11 @@ pub struct Function {
     pub loc: Loc,
 }
 
-pub fn set_fun_name(name: Ident, fun: &mut Function) -> &Function {
-    fun.name = Some(name.name);
-    fun
+pub fn set_fun_name(name: String, fun: Function) -> Function {
+    Function {
+        name: Some(name),
+        ..fun
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -141,7 +143,7 @@ pub enum ModuleStatementValue {
     // Import(String),
 }
 
-pub fn binop(l: &Expr, op: &BinOp, r: &Expr, start: i32, end: i32) -> Expr {
+pub fn binop(l: &Expr, op: &BinOp, r: &Expr, start: usize, end: usize) -> Expr {
     Expr {
         type_: None,
         loc: Loc { start, end },
@@ -149,7 +151,7 @@ pub fn binop(l: &Expr, op: &BinOp, r: &Expr, start: i32, end: i32) -> Expr {
     }
 }
 
-pub fn unop(op: &UnOp, r: &Expr, start: i32, end: i32) -> Expr {
+pub fn unop(op: &UnOp, r: &Expr, start: usize, end: usize) -> Expr {
     Expr {
         type_: None,
         loc: Loc { start, end },
