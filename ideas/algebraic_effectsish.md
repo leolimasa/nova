@@ -26,7 +26,7 @@ print_file_contents = (path) =>
 
 Becase read_file returns an effect type, the type inference will infer the parent function as also having that effect type.
 
-Effects can be thrown. When they are, they interrupt the control flow of the calling function.
+When, they interrupt the control flow of the calling function.
 
 ```
 validate_name = (name) =>

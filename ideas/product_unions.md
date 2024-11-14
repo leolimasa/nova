@@ -1,5 +1,7 @@
 # Product unions
 
+Note: if we go with multiple dispatch, a lot of this is moot.
+
 Normally, we'd have tagged unions and product types declared separately. Ex:
 
 ```

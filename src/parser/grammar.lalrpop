@@ -51,12 +51,12 @@ pub Expr: Expr = {
 }
 
 Term: Expr = { 
-    <start:@L> <v:Int> <end:@R> => expr(None, ExprValue::Int(v), start, end), 
-    <start:@L> <v:Float> <end:@R> => expr(None, ExprValue::Float(v), start, end),
+    <start:@L> <v:Int> <end:@R> => expr(Some(Type::Int), ExprValue::Int(v), start, end), 
+    <start:@L> <v:Float> <end:@R> => expr(Some(Type::Float), ExprValue::Float(v), start, end),
     // Identifier => Expr::Identifier(<>),
     // StringLiteral => Expr::StringLiteral(<>),
     "(" <Expr> ")",
-    <start:@L> <v:Boolean> <end:@R> => expr(None, ExprValue::Boolean(v), start, end)
+    <start:@L> <v:Boolean> <end:@R> => expr(Some(Type::Boolean), ExprValue::Boolean(v), start, end)
 };
 
 // ----------------------------------------------------------------------------

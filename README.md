@@ -5,14 +5,14 @@ Loose thread: the bool test for expression is failing. Fix it.
 
 ## Language Canary
 
-* [.] Minimum Viable Compiler: simple expressions, functions 
-    * [o] Parser
+* [o] Minimum Viable Compiler: simple expressions, functions 
+    * [O] Parser
         * [X] Move IR to be default implementation
         * [X] Add loc fields to AST
         * [ ] Change lalrpop to pass things by ref
         * [X] Change function declaration to function operator (=>)
         * [X] Move annotate_types to the typing module
-        * [ ] Remove implicit type casts for float and int
+        * [X] Remove implicit type casts for float and int
         * [X] Change expr to take type as a struct field
         * [X] Require type annotations for function arguments
         * [ ] Function calls
@@ -60,10 +60,12 @@ Loose thread: the bool test for expression is failing. Fix it.
 
 ## Advanced types
 
-* [ ] Row types
-* [ ] Operator overloading based on row types
+* [ ] Row types / structural subtyping
 * [ ] Polymorphic variants
+* [ ] Operator overloading based on row types
 * [ ] Lexically scoped Algebraic effects using coroutines
+* [ ] Affine / linear types to control mutability
+* [ ] Multiple dispatch
 
 ## Future
 

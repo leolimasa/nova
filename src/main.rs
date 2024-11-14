@@ -3,6 +3,11 @@ mod parser {
   pub mod ast;
 }
 
+mod typing {
+  pub mod expr;
+  pub mod error;
+}
+
  mod codegen {
    pub mod llvm;
 }
