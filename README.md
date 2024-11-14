@@ -1,5 +1,5 @@
 # nova
-Easy to write, easy to read, hard to break. A new programming language.
+Easy to write, easy to read, hard to break, and runs everywhere.
 
 Loose thread: the bool test for expression is failing. Fix it.
 
@@ -25,7 +25,6 @@ Loose thread: the bool test for expression is failing. Fix it.
         * [ ] Native compilation
 * [ ] remove wasm rust libs
 * [ ] Integrate libc / musl
-* [ ] Integrate boehm or another GC
 * [ ] Strings
     * [ ] Parser
     * [ ] LLVM
@@ -46,31 +45,33 @@ Loose thread: the bool test for expression is failing. Fix it.
     * [ ] LLVM: struct access
     * [ ] LLVM: struct assignment
 
-## Main language
-
-* [ ] Write spec
-* [ ] Parser
-    * [ ] Comment support
-    * [ ] Create special tokenizer for indentation
-
 ## Basic Types
 
-* [ ] HM type inference
+* [ ] HM type inference and checking
 * [ ] Generics
 
 ## Advanced types
 
 * [ ] Row types / structural subtyping
 * [ ] Polymorphic variants
-* [ ] Operator overloading based on row types
-* [ ] Lexically scoped Algebraic effects using coroutines
-* [ ] Affine / linear types to control mutability
 * [ ] Multiple dispatch
+* [ ] Dependent types
+* [ ] Affine / linear types to control mutability
+* [ ] (maybe) Lexically scoped Algebraic effects using coroutines
+
+## Memory management
+
+Evaluate how to leverage the type system to come up with a memory management strategy.
+
+## Final lang spec
+
+Given all the practical experience gained so far, write down the final language specification. Note what needs to change from the current implementation.
 
 ## Future
 
 * [ ] stdlib (hashmaps, lists, etc)
 * [ ] repl
+* [ ] javascript
 * [ ] WASM language interop
 * [ ] package manager with WASM as common distribution for compiled sources
 

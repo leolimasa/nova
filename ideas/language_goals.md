@@ -4,11 +4,11 @@
 
 Nova concepts should be intuitive to understand. The language should have few but powerful concepts. Use symbols sparingly. There should be low cognitive load to write the language - no worries about interfaces, memory layout, or other low-level details.
 
-**The language should be learnable in a day by a seasoned programmer.**
+**Learnable in a day by a seasoned programmer.**
 
 ## Pragmatic
 
-Nova should focus on solving real world problems as opposed to purely academic ones. It should get out of the way of the programmer. It should incentivate team collaboration.
+Nova should focus on solving real world problems as opposed to purely academic ones. It should get out of the way of the programmer. It should incentivate team collaboration and make it easy to write concurrent applications.
 
 **Write real-world production grade programs**
 
@@ -20,7 +20,7 @@ The language should prevent common errors at compile time.
 
 ## Readable
 
-The syntax should be simple with as few keywords as possible.
+The syntax should be simple with as few keywords as possible. Few symbols. Focus on consistency.
 
 **The language should be consistent everywhere.**
 
