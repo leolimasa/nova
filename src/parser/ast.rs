@@ -53,6 +53,14 @@ pub struct Expr {
     pub value: Box<ExprValue>, 
 }
 
+pub fn empty_expr() -> Expr {
+    Expr { 
+        type_: None, 
+        loc: Loc {start:0, end: 0},
+        value: Box::new(ExprValue::Int(0))
+    }
+}
+
 pub fn expr(type_: Option<Type>, value: ExprValue, start: usize, end: usize) -> Expr {
     Expr {
         type_,

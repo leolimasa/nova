@@ -1,0 +1,35 @@
+import http
+import error on_error
+import str
+
+WeatherData = record
+    city: String
+    temp: Float
+
+fetch_weather_data = fn
+    city:    String
+    api_key: String
+    ->       http.Response
+    => 
+ 
+    # commas can be ommitted when there is a newline
+    url = str.concat( 
+	    "https://api.openweathermap.org/data/2.5/weather?q="
+	    city
+	    "&appid=" 
+	    api_key
+	    "&units=metric")
+        
+    resp = http.get(url)
+    if resp == Ok(response)
+        return parse_weather_response(response)
+        
+    # Because of the if above, response here is anything but Ok
+    resp 
+    
+main = fn =>
+    api_key = "KEY_HERE"
+    city = process.argv(2)
+    weather_data = fetch_weather_data(city, api_key)
+    temp = data["main"]["temp"]
+    print ("Current temperature in ", city, " is ", temp)
