@@ -33,6 +33,8 @@
               http-server
               clang
               llvm_18
+              libffi
+              libxml2
             ]; 
 
             shellHook = ''

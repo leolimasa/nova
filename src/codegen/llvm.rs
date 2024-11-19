@@ -8,12 +8,14 @@ use inkwell::context::Context;
 use inkwell::module::Module;
 use inkwell::builder::Builder;
 
-struct CodeGen<'a> {
-    module: &'a Module<'a>,
-    builder: &'a Builder<'a>,
-    context: &'a Context,
+#[derive(Debug)]
+pub struct CodeGen<'a, 'b> {
+    pub module: &'a Module<'b>,
+    pub builder: &'a Builder<'b>,
+    pub context: &'a Context,
 }
 
+#[derive(Debug)]
 pub enum CompileError {
     TypeError(TypeError),
     UntypedExpr(Expr),
@@ -38,9 +40,9 @@ fn build_floatval<'a>(expr: Result<inkwell::values::FloatValue<'a>, inkwell::bui
     Ok(CompiledExpr::FloatValue(cexpr))
 }
 
-pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &Expr) -> Result<CompiledExpr<'a>, CompileError> {
+pub fn expr<'a, 'b>(symbols: &HashMap<&str, Type>, codegen: &CodeGen<'a, 'b>, expression: &Expr) -> Result<CompiledExpr<'a>, CompileError> {
 
-    let Some(t) = expression.type_ else {
+    let Some(t) = &expression.type_ else {
         return Err(CompileError::UntypedExpr(expression.clone()));
     };
 
@@ -48,7 +50,7 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
         ExprValue::Int(i) => Ok(CompiledExpr::IntValue(codegen.context.i64_type().const_int(i as u64, false))),
         ExprValue::Float(f) => Ok(CompiledExpr::FloatValue(codegen.context.f64_type().const_float(f))),
         ExprValue::Boolean(b) => Ok(CompiledExpr::IntValue(codegen.context.bool_type().const_int(b as u64, false))),
-        ExprValue::UnOp(op, ex) => {
+        ExprValue::UnOp(ref op, ref ex) => {
             let e = expr(&symbols, &codegen, &ex)?;
             match t {
                 Type::Boolean => {
@@ -64,7 +66,7 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
             }
             
         },
-        ExprValue::BinOp(lhs, op, rhs) => {
+        ExprValue::BinOp(ref lhs, ref op, ref rhs) => {
             let l = expr(&symbols, &codegen, &lhs)?;
             let r = expr(&symbols, &codegen, &rhs)?;
  
@@ -75,7 +77,7 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
                         Err(CompileError::ExprMustBeInt(lhs.clone()))?
                     };
 
-                    let CompiledExpr::IntValue(rv) = l else { 
+                    let CompiledExpr::IntValue(rv) = r else { 
                         Err(CompileError::ExprMustBeInt(rhs.clone()))?
                     };
 
@@ -91,7 +93,7 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
                         BinOp::Gt => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SGT, lv, rv, "gt_int")),
                         BinOp::Le => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SLE, lv, rv, "le_int")),
                         BinOp::Ge => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SGE, lv, rv, "ge_int")),
-                        _ => Err(CompileError::BinopNotSupportedForType(op, Type::Int)), 
+                        _ => Err(CompileError::BinopNotSupportedForType(op.clone(), Type::Int)), 
                     }
                 },
                 Type::Float => {
@@ -115,7 +117,7 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
                         BinOp::Gt => build_intval(codegen.builder.build_float_compare(inkwell::FloatPredicate::OGT, lv, rv, "gt_float")),
                         BinOp::Le => build_intval(codegen.builder.build_float_compare(inkwell::FloatPredicate::OLE, lv, rv, "le_float")),
                         BinOp::Ge => build_intval(codegen.builder.build_float_compare(inkwell::FloatPredicate::OGE, lv, rv, "ge_float")),
-                        _ => Err(CompileError::BinopNotSupportedForType(op, Type::Float)),
+                        _ => Err(CompileError::BinopNotSupportedForType(op.clone(), Type::Float)),
                     }
                 },
                 Type::Boolean => {
@@ -134,12 +136,19 @@ pub fn expr<'a>(symbols: &HashMap<&str, Type>, codegen: &CodeGen, expression: &E
                         BinOp::Gt => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SGT, lv, rv, "gt_bool")),
                         BinOp::Le => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SLE, lv, rv, "le_bool")),
                         BinOp::Ge => build_intval(codegen.builder.build_int_compare(inkwell::IntPredicate::SGE, lv, rv, "ge_bool")),
-                        _ => Err(CompileError::BinopNotSupportedForType(op, Type::Boolean)),
+                        _ => Err(CompileError::BinopNotSupportedForType(op.clone(), Type::Boolean)),
                     }
                 },
                 _ => unimplemented!(),
             }
         }
+    }
+}
 
+// TODO this is using .clone(). Refactor to reference instead.
+pub fn get_basic_value<'a>(compiled_expr: &CompiledExpr<'a>) -> Box<dyn inkwell::values::BasicValue<'a> + 'a> {
+    match compiled_expr {
+        CompiledExpr::IntValue(v) => Box::new(v.clone()),
+        CompiledExpr::FloatValue(v) => Box::new(v.clone()),
     }
 }
