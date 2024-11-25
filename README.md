@@ -1,7 +1,7 @@
 # nova
 Easy to write, easy to read, hard to break, and runs everywhere.
 
-Loose thread: the bool test for expression is failing. Fix it.
+Loose thread: started to write the block compiler. Will need to infer the types.
 
 ## Language Canary
 
@@ -16,14 +16,14 @@ Loose thread: the bool test for expression is failing. Fix it.
         * [X] Change expr to take type as a struct field
         * [X] Require type annotations for function arguments
         * [ ] Function calls
-    * [ ] LLVM compiler
-        * [ ] Expressions (literals and operators, except arrays, struct, and strings)
+    * [.] LLVM compiler
+        * [X] Expressions (literals and operators, except arrays, struct, and strings)
         * [ ] Block, with expression return
         * [ ] Function definition
         * [ ] Function calls
         * [ ] JIT compilation for tests
         * [ ] Native compilation
-* [ ] remove wasm rust libs
+* [X] remove wasm rust libs
 * [ ] Integrate libc / musl
 * [ ] Strings
     * [ ] Parser
@@ -37,7 +37,7 @@ Loose thread: the bool test for expression is failing. Fix it.
     * [ ] LLVM: array literals
     * [ ] LLVM: array access
     * [ ] LLVM: array assignment
-* [ ] Structs
+* [ ] Records
     * [ ] Parser: struct declaration
     * [ ] Parser: struct access (dot operator)
     * [ ] Parser: struct assignment
@@ -54,14 +54,24 @@ Loose thread: the bool test for expression is failing. Fix it.
 
 * [ ] Row types / structural subtyping
 * [ ] Polymorphic variants
-* [ ] Multiple dispatch
-* [ ] Dependent types
+* [ ] Multiple dispatch (by having a single function have multiple defs)
+* [ ] (maybe) Dependent types
 * [ ] Affine / linear types to control mutability
 * [ ] (maybe) Lexically scoped Algebraic effects using coroutines
+
+## Syntatic sugar
+
+* [ ] Implicit env passing
+* [ ] Implicit return passing
+* [ ] `use` notation
+* [ ] Pattern matching
+* [ ] List comprehensions
+* [ ] Destructuring
 
 ## Memory management
 
 Evaluate how to leverage the type system to come up with a memory management strategy.
+
 
 ## Final lang spec
 

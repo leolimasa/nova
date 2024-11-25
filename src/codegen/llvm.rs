@@ -145,6 +145,14 @@ pub fn expr<'a, 'b>(symbols: &HashMap<&str, Type>, codegen: &CodeGen<'a, 'b>, ex
     }
 }
 
+pub fn block(symbols: &HashMap<&str, Type>, codegen: &CodeGen, block: &Block) -> Result<(), CompileError> {
+    for stmt in &block.stmts {
+        stmt(&symbols, &codegen)?;
+    }
+
+    Ok(())
+}
+
 // TODO this is using .clone(). Refactor to reference instead.
 pub fn get_basic_value<'a>(compiled_expr: &CompiledExpr<'a>) -> Box<dyn inkwell::values::BasicValue<'a> + 'a> {
     match compiled_expr {

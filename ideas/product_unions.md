@@ -5,15 +5,15 @@ Note: if we go with multiple dispatch, a lot of this is moot.
 Normally, we'd have tagged unions and product types declared separately. Ex:
 
 ```
-SomeUnionType = A | B | C
+SomeUnionType = oneof A, B, C
 
-SomeProductType = { a: int, b: string }
+SomeProductType = record a: int, b: string
 ```
 
 Product unions treat **all** types as tagged unions with an optional product type atteched to it. It is attached with the & operator. Ex:
 
 ```
-SomeType = A | B & { a: int, b: string }
+SomeType = oneof A, B & record a: int, b: string
 ```
 
 The above means that SomeType will always have `a` and `b` fields, but it can be either A or B. This allows dynamic dispatch to work transparently by adding fields to an existing variable:

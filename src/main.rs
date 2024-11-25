@@ -39,12 +39,12 @@ fn main() {
   };
   let compiled_expr = codegen::llvm::expr(&empty_hashmap, &codegen, &expr).unwrap();
   let compiled_expr_val = get_basic_value(&compiled_expr);
-  let ret = builder.build_return(Some(&*compiled_expr_val)).unwrap(); // the &*: remove the box,
-                                                                      // then pass as reference.
+  builder.build_return(Some(&*compiled_expr_val)).unwrap(); // the &*: remove the box,
+                                                            // then pass as reference.
   // Run
   let ee = module.create_jit_execution_engine(inkwell::OptimizationLevel::None).unwrap(); 
   let result = unsafe { 
-    type MainFn = unsafe extern "C" fn() -> i32;
+    type MainFn = unsafe extern "C" fn() -> i64;
     let main: JitFunction<MainFn> = ee.get_function("main").unwrap();
     main.call()
   };

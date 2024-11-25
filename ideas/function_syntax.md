@@ -26,13 +26,13 @@ set_name =
 Function calls can specify the field name:
 
 ```python
-set_name obj name="John" name_check=True
+set_name(obj, name="John" name_check=True)
 ```
 
 Function calls with no params can be called with `()`:
 
 ```python
-set_name ()
+set_name()
 ```
 
 If a field has a None variant, or a default value, it is optional:
@@ -65,14 +65,14 @@ Functions can be defined on a single line:
 set_name = fn obj, name => obj.name = name; obj
 ```
 
-Empty parameters are denoted by `()`:
+Function with no arguments:
 
 ```python
-say_hello = fn () => "Hello"
+say_hello = fn => "Hello"
 ```
 
 Python style \*\*args is defined by having the last argument be an array:
 
 ```python
-sum = fn nums: Int[] -> Int => nums.reduce (a, b) => a + b
+sum = fn nums: Int[] -> Int => nums.reduce(a, b) => a + b
 ```
