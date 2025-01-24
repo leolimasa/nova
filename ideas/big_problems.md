@@ -12,3 +12,4 @@ The current big problems in programming languages are:
 * Memory management: How to make memory management safe and efficient and runnable on constrained devices
     * linear types for mutability
     * automated lifetime tracking
+    * compiler that detects which memory management strategy to use depending on how the variable is used.

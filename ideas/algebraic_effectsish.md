@@ -3,7 +3,7 @@ A function would have two return types: the main return type, and an effect type
 Ex:
 
 ```
-read_file: (path: String) -> String / Error<ReadFileError>
+read_file = fn (path: String) -> String \ Error<ReadFileError>
 ```
 
 If a function has an effect type, it will automatically be wrapped when called.
@@ -11,7 +11,7 @@ If a function has an effect type, it will automatically be wrapped when called.
 Ex:
 
 ```
-print_file_contents = (path) =>
+print_file_contents = fn (path) =>
     file = read_file(path)
     print(file)
 ```
@@ -19,8 +19,8 @@ print_file_contents = (path) =>
 is equivalent to
 
 ```
-print_file_contents = (path) =>
-    read_file(path, (file) =>
+print_file_contents = fn (path) =>
+    read_file(path, fn (file) =>
         print(file))
 ```
 
@@ -29,7 +29,7 @@ Becase read_file returns an effect type, the type inference will infer the paren
 When, they interrupt the control flow of the calling function.
 
 ```
-validate_name = (name) =>
+validate_name = fn (name) =>
     if name != ""
         name 
     else
@@ -50,7 +50,7 @@ main = () =>
 The above is equivalent to:
 
 ```
-validate_name = (name, continue): Nothing | Error(String) =>
+validate_name = (name, continue): Nothing \ Error(String) =>
     if name != ""
         continue(name)
     else
@@ -63,6 +63,6 @@ main = () =>
         else
             continue(v)
             
-    rest = (name) => print(name)
+    rest = fn (name) => print(name)
     handler(validate_name("John", rest), rest)
 ```

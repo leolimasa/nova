@@ -27,11 +27,11 @@ setup_ctx = fn =>
         ..ctx
     }
 
-main = fn =>
+main = fn () =>
     ctx = setup_ctx()
     sum_foos()
 
-sum_foos = fn =>
+sum_foos = fn () =>
     foo1 = Foo()
     foo2 = Foo()
     foo1 + foo2
@@ -40,7 +40,7 @@ sum_foos = fn =>
 Is equivalent to:
 
 ``` python
-setup_ctx = fn ctx => 
+setup_ctx = fn (ctx) => 
     {
         operators: {
             add:
@@ -52,11 +52,11 @@ setup_ctx = fn ctx =>
         ..ctx
     }
 
-main = fn ctx =>
+main = fn (ctx) =>
     ctx = setup_ctx(ctx)
     sum_foos(ctx)
 
-sum_foos = fn ctx =>
+sum_foos = fn (ctx) =>
     foo1 = Foo()
     foo2 = Foo()
     ctx.operators.add(foo1, foo2)

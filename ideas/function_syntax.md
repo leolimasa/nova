@@ -26,7 +26,7 @@ set_name =
 Function calls can specify the field name:
 
 ```python
-set_name(obj, name="John" name_check=True)
+set_name(obj, name="John", name_check=True)
 ```
 
 Function calls with no params can be called with `()`:
