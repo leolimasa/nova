@@ -1,0 +1,82 @@
+import std 
+    operators ops
+    collection { map, reduce, filter }
+import file ./optional { Optional }
+
+export set, get new, concat, append
+
+List = type (a) { value: a, next: Optional(List) } 
+
+Index = type (list) Int where v < len(list)
+
+set = (list, idx: Index, value) => 
+    map(
+        list 
+        (item, i) => 
+	    if idx == i then value else item
+    )
+
+get = (list, idx: Index) =>
+    loop = (item, cur_idx) =>
+        if idx == cur_idx then
+            item.value
+        else 
+            if item.next == None then return None
+            loop(item.next, cur_idx + 1)
+    loop(list, 0)
+
+# would get unrolled as
+# get = (list, idx: Index) =>
+#     loop = (item, cur_idx) =>
+#         while True
+# 	    if idx == cur_idx then
+# 	        return item.value
+# 	    else
+# 	        if item.next == None then return None
+# 	        item = item.next
+# 	        cur_idx = cur_idx + 1
+# 	        continue
+#    loop(list, 0)
+
+new = (value) => { value, next = None }
+
+len = (list) => reduce(list, 0, (item, result, i) => result + 1)
+
+concat = (list_a, list_b) => 
+    if list_a == None then 
+        list_b 
+    else
+        { ..list_a, next: list_b }
+
+append = (list_a, value) => concat(new(value))
+
+ops.add += concat  
+
+ops.add += append
+
+ops.access += get
+
+ops.access_assign += set
+
+reduce += (list, initial_value, fn) =>
+    loop = (item, acc, idx) =>
+        result = fn(item, acc, idx)
+        if item.next == None then return result
+	loop(item.next, result, idx + 1)
+    loop(list, initial_value, 0)
+
+map += (list, fn) => reduce(
+    list
+    None 
+    (item, result, i) => append(result, fn(item, i))
+)  
+
+filter += (list, fn) => reduce(
+    list
+    None
+    (item, result, i) =>
+        if fn(item, i) then 
+	    append(result, item) 
+	else 
+	    result
+)

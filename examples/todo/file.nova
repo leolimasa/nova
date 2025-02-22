@@ -1,0 +1,15 @@
+sysc = import std syscall
+
+File = type Linear({
+    path: String
+    fd: int
+    mode: int
+})
+
+open = (path, mode) => 
+    fd = sysc.open(path, mode)
+    if fd == -1 then
+        return Error(FileOpenFail)
+    Linear({ path, fd, mode })
+
+close = (file: consumes File) => sysc.close(file.fd)

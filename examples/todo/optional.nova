@@ -1,0 +1,11 @@
+import std functional { try }
+
+Optional = type (a) oneof a | None
+
+try += (value, callback) => 
+    if value == None then
+        None
+    else
+        callback(value)
+    
+

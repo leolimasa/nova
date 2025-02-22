@@ -1,0 +1,104 @@
+# -----------------------------------------------------------------------------
+# Naive implementation for a predetermined type
+# -----------------------------------------------------------------------------
+
+Department = type {
+    name: String
+}
+
+Person = type {
+    name: String
+    age: Int
+    department: Department
+}
+
+Json = oneof 
+    JInt(value: Int)
+    JString(value: String)
+    JObject(value: Map(String, Json))
+
+encode_department = (department) =>
+    obj = map.new()
+    obj["name"] = department.name
+    JObject(obj)
+
+decode_department = (json) =>
+    if json != JObject(obj) then
+       return Error("Must be an object")
+
+    JObject(obj) = json
+
+    # User will be forced to add this due to dependend types
+    if not map.has_key("name", obj) then
+	return Error("No name field on " + obj)
+
+    { name = obj["name"] }
+
+encode_person = (person) =>
+    obj = map.new()
+    obj["name"] = person.name
+    obj["age"] = person.age
+    obj["department"] = encode_department(person.department)
+    JObject(obj)
+
+decode_person = (json) =>
+    ...
+
+        
+# -----------------------------------------------------------------------------
+# Serialization solution
+# -----------------------------------------------------------------------------
+
+# The reflect.serialize and reflect.deserialize functions are built-in compiler
+# functions in std that read the type and outputs serialized and deserialized
+# versions.
+#
+# Annotations are prefixed with "@" and go after the type definition
+#
+# This is preferable to full blown macros so that the code remains readable.
+# Macros have a tendency to obfuscate what the code does.
+
+Serialized = type {
+	annotations: Map(String, String)
+	content: oneof
+	    SString(value: String)
+	    SInt(value: Int)
+	    SBoolean(value: Int)
+	    SRecord(value: Map(String, Serialized))
+	    SList(value: List(Serialized))
+	    SFunction(name: String) # Add other stuff like args in the future
+}
+
+serialize = (anyobj) -> Serialized => ...implemented by compiler
+
+deserialize = <T>(serialized: Serialized) -> T => ...implemented by compiler
+
+# -----------------------------------------------------------------------------
+# Macro/comptime solution
+# -----------------------------------------------------------------------------
+
+# This is more future proof, as it allows adding features to the language.
+
+Department = type {
+    name: String
+}
+
+Person = type {
+    name: String
+    age: Int
+    department: Department
+}
+
+encode = open fn(v) -> Json
+decode = open fn(j: Json) -> a 
+
+encode += comptime generate_encode_json<Department>()
+decode += comptime generate_decode_json<Department>()
+
+generate_encode_json = macro <T>() =>
+   # T is a serialized type here, since this is a macro.
+   # Macro returns an AST.
+   ast.parse(t"""
+  	(obj) -> ${T.name} => 
+	    
+   """)
