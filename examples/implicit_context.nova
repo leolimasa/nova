@@ -1,0 +1,91 @@
+# There are two use cases for "implicit context":
+#
+# * Sum context: when the context must be either a value or the context. Ex.: error, maybe, etc..
+# * Product context: when the context is always the value plus a context. Ex.: state, promise, etc...
+#
+# The first can be handled elegantly with bubble. The second, maybe with use or chain?
+#
+# in both cases they alter the flow of computation, which is why they are implemented
+# with algebraic effects or monads.
+
+# General format:
+
+ctx.some_var, value = a_fun(ctx.some_var, params)
+if value == Return(v) {
+    return v
+}
+... then wrap all returns with "return { val: original_return, ctx }"
+
+# A request may return either an error or an optional response
+RequestError = oneof { ErrorHttpResponse, ... }
+
+request = (url) -> oneof { Error(RequestError), Response, None }  => ...
+
+# Always force a return for errors
+unwrap += (e: Error) => Return(e)
+
+get_google = () => {
+    response = request("https://www.google.com") 
+
+    if response == Error {
+	response = unwrap(response)
+    }
+    if response == Return(v) {
+	return v
+    }
+
+    if response == None {
+	response = unwrap(response)
+    }
+    if response == Return(v) {
+	return v
+    }
+
+    # Now, response MUST be Response, since all other cases have been handled
+    to_str(response)
+}
+
+# -----------------------------------------------------------------------------
+# With bubble
+# -----------------------------------------------------------------------------
+# Because of algebraic variants, bubble can be implemented with just a macro.
+
+get_google = () => {
+    # The bubble macro automatically adds if statements for Error and None
+    @bubble(Error, None)
+    response = request("https://www.google.com") 
+    to_str(response)
+}
+
+# -----------------------------------------------------------------------------
+# State monad
+# -----------------------------------------------------------------------------
+# The "use" keyword will automatically call chain
+
+Log = {
+    result: 
+    log: List(String)
+}
+
+log = (msg: String, logs: List(str)) -> logs: List(str) => ...
+
+unwrap += (log: Log) -> 
+
+request = (ctx) => {
+    ctx.log = log(ctx.log, "Performing request")
+
+    response = request("https://www.google.com") 
+
+    # If we use bubble here, it HAS to know it has an associated state
+    if response == Error {
+	ctx.log = log(ctx.log, "Could not complete request")
+	return rec { ctx, response }
+    }
+
+    if response == None {
+	ctx.log = log(ctx.log, "Empty request")
+	return rec { ctx, response }
+    }
+
+    rec { ctx, to_str(response) }
+}

@@ -1,12 +1,11 @@
 import file 
     ./linked_list list
     ./optional opt
-
 import std 
     convert
     functional { try }
 
-Item = type { label: String, checked: Bool }
+Item = type Item(label: String, checked: Bool)
 
 toggle_item = (items, idx) =>
     # This gets desugared to
@@ -21,9 +20,10 @@ add_item = (items) =>
 select_item = (items) =>
     print("Select item #: ")
     num = read() | convert.to_int
-    if num == Error(e) then
+    if num == Error(e) {
         print("Must be a number")
 	return None
+    }
     num
 
 delete_item = (items) =>
@@ -38,7 +38,7 @@ rename_item = (items) =>
 
 list_items = (items) => map(items, (item, i) => print(i + ") " + item.label))
 
-action = (items) =>
+action = (items) => {
     list_items(items)
     print("""
     	Select action:
@@ -48,16 +48,18 @@ action = (items) =>
 	4) Rename item
     """)
     action = read("Action: ") | convert.to_int
-    if action == Error(e) then
+    if action == Error(e) {
         print("Invalid action.")
 	return action(items)
+    }
 
-    when action
+    when action {
         is 1 => add_item(items)
 	is 2 => delete_item(items)
 	is 3 => toggle_item(items)
 	is 4 => rename_item(items)
-    
-main = () =>
-    action(None)
+    }
+}
+
+main = () => action(None)
     

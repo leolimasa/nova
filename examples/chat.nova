@@ -1,0 +1,44 @@
+import concur { Chan, send, spawn, context, recv, recv_state }
+
+ClientMsg = type Send(String) | Receive(String) | Done
+
+ListenerMsg = type Connected(Client) | Done
+
+RoomMsg = type Broadcast(String) | AddClient(Client) | Done
+
+Room = type {
+    clients List(Client)
+    chan Chan(RoomMsg)
+}
+
+start_room = (room Room) =>
+    recv_state([room.chan], room, (msg) =>
+    	when msg
+            is AddClient(client) =>
+	        { ..room, clients: room.clients + client }
+		|> UpdateState
+	    is Broadcast(msg) =>
+	        room.clients
+		|> map((client) => send(client, msg), _)
+		Continue
+	    is Done => Break(Done)
+    )
+   
+start_listener = () => ...
+
+    
+main = () =>
+    ctx = context.Background()
+    listener = make_chan<ListenerMsg>()
+    spawn(() => start_listener(listener))
+    room = make_chan<RoomMsg>()
+    spawn(() => start_room(room))
+
+    # Continuously dump new listeners into room1
+    msg = use recv([listener.connected, ctx.Done()], _)
+    when msg 
+        is Done => Break(None)
+        is Connected(client) => 
+	    spawn(() => start_client(client))
+	    send(AddClient(client), room1)
+	    Continue

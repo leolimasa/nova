@@ -1,0 +1,41 @@
+
+Point = type rec(x: Float, y: Float)
+
+Element = type rec(position: Point, size: Point, children: List(Element))
+
+Context = type rec(viewport: Point)
+
+Window = type rec(size: Point)
+
+Prop = type ()
+
+Ast = type
+    Int
+    Float
+    ElProp(el: Element, prop: )
+    Sum(lhs: Ast, rhs: Ast)
+    Mul(lhs: Ast, rhs: Ast)
+    Div(lhs: Ast, rhs: Ast)
+
+ops.add += (el: Element, v: Float) => .. 
+ops.add += (v: Float, ) ...
+...
+
+layout = (root: Element) =>
+    # Create LazyElements from the tree
+    # Call "calculate_position" and "calculate_size" for all elements
+    # Figure out the dependencies
+    # Sort in order of dependencies then execute
+    # Update elements position and size with values and return them
+
+# Example
+Box = type Cube(position: point, size: Point, color: RGB)
+
+calculate_position += (b: Box, v: Viewport, p: List(LazyElement), c: List(LazyElement)) -> Ast =>
+    rec
+       x: p[0].x + b.padding_left
+       y: p[0].y + b.padding_top
+
+calculate_size += (b: Box, v: Viewport, parents: List(LazyElement)) -> Ast => ...
+    
+

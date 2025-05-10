@@ -3,6 +3,8 @@ Easy to write, easy to read, hard to break, and runs everywhere.
 
 Loose thread: started to write the block compiler. Will need to infer the types.
 
+You'll need xcode if building on mac.
+
 ## Language Canary
 
 * [o] Minimum Viable Compiler: simple expressions, functions 
@@ -16,15 +18,14 @@ Loose thread: started to write the block compiler. Will need to infer the types.
         * [X] Change expr to take type as a struct field
         * [X] Require type annotations for function arguments
         * [ ] Function calls
-    * [.] LLVM compiler
-        * [X] Expressions (literals and operators, except arrays, struct, and strings)
+    * [ ] Golang compiler
+        * [ ] Expressions (literals and operators, except arrays, struct, and strings)
         * [ ] Block, with expression return
         * [ ] Function definition
         * [ ] Function calls
         * [ ] JIT compilation for tests
         * [ ] Native compilation
 * [X] remove wasm rust libs
-* [ ] Integrate libc / musl
 * [ ] Strings
     * [ ] Parser
     * [ ] LLVM
@@ -67,11 +68,6 @@ Loose thread: started to write the block compiler. Will need to infer the types.
 * [ ] Pattern matching
 * [ ] List comprehensions
 * [ ] Destructuring
-
-## Memory management
-
-Evaluate how to leverage the type system to come up with a memory management strategy.
-
 
 ## Final lang spec
 

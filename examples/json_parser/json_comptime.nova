@@ -1,0 +1,25 @@
+Department = struct {
+    name: String
+}
+
+Person = struct {
+    name: String
+    age: Int
+    department: Department
+}
+
+Json = oneof {
+    JInt(value: Int)
+    JString(value: String)
+    JObject(value: Map(String, Json))
+}
+
+encode = fn (obj) {
+   comptime {
+	...		
+   } 
+}
+
+decode = fn (json: Json) -> a {
+    
+}

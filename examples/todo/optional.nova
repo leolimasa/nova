@@ -1,6 +1,8 @@
-import std functional { try }
+import std (functional { try })
 
 Optional = type (a) oneof a | None
+
+Optional = type (a) (a, None)
 
 try += (value, callback) => 
     if value == None then

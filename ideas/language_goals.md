@@ -39,3 +39,9 @@ Nova should work everywhere, from mobile devices to web browsers. Our initial ta
 * JavaScript
 
 **Write once, compile to everywhere.**
+
+## Explicit
+
+Nova should not hide control flow. Things like algebraic effects and monads confuse users. Nova instead leverages its flexible type system to make control flow easy.
+
+**All control flow should be visible**

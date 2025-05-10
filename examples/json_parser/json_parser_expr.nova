@@ -1,0 +1,34 @@
+Department = struct { 
+    name: String
+}
+
+Person = struct {
+    name: String
+    age: Int
+    department: Department
+}
+
+Json = oneof {
+    JInt value:Int
+    JString value:String
+    JObject value:(Map String Json) 
+}
+
+encode_department = department => {
+    obj = map.new ()
+    obj "name" = department.name
+    JObject obj
+}
+
+decode_department = json => {
+    if json != JObject obj {
+	return Error "Must be an object"	
+    }
+    Jobject obj = json
+    if not (map.has_key "name" obj) {
+	return Error "No name field on" + obj
+    }
+    struct {
+    	name: (obj "name")
+    }
+}

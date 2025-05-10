@@ -1,22 +1,19 @@
 import std 
     operators ops
     collection { map, reduce, filter }
-import file ./optional { Optional }
+import file (./optional { Optional })
 
-export set, get new, concat, append
+@pub
+List = type (a) => List(value:a , next: Optional(List))
 
-List = type (a) { value: a, next: Optional(List) } 
-
+@pub
 Index = type (list) Int where v < len(list)
 
-set = (list, idx: Index, value) => 
-    map(
-        list 
-        (item, i) => 
-	    if idx == i then value else item
-    )
+pub set = (list, idx: Index, value) => 
+    (item, i) => if idx == i then value else item
+    | map(list, _)
 
-get = (list, idx: Index) =>
+pub get = (list, idx: Index) =>
     loop = (item, cur_idx) =>
         if idx == cur_idx then
             item.value
@@ -38,17 +35,17 @@ get = (list, idx: Index) =>
 # 	        continue
 #    loop(list, 0)
 
-new = (value) => { value, next = None }
+pub new = (value) => { value, next = None }
 
-len = (list) => reduce(list, 0, (item, result, i) => result + 1)
+pub len = (list) => reduce(list, 0, (item, result, i) => result + 1)
 
-concat = (list_a, list_b) => 
+pub concat = (list_a, list_b) => 
     if list_a == None then 
         list_b 
     else
         { ..list_a, next: list_b }
 
-append = (list_a, value) => concat(new(value))
+pub append = (list_a, value) => concat(new(value))
 
 ops.add += concat  
 
@@ -71,7 +68,7 @@ map += (list, fn) => reduce(
     (item, result, i) => append(result, fn(item, i))
 )  
 
-filter += (list, fn) => reduce(
+filter += (list, fn) => reduce
     list
     None
     (item, result, i) =>
@@ -79,4 +76,3 @@ filter += (list, fn) => reduce(
 	    append(result, item) 
 	else 
 	    result
-)

@@ -2,15 +2,15 @@ import http
 import error on_error
 import str
 
-WeatherData = record
+WeatherData = rec {
     city: String
     temp: Float
+}
 
-fetch_weather_data = fn
+fetch_weather_data = (
     city:    String
     api_key: String
-    ->       http.Response
-    => 
+    ) -> http.Response => {
  
     # commas can be ommitted when there is a newline
     url = str.concat( 
@@ -25,11 +25,13 @@ fetch_weather_data = fn
         return parse_weather_response(response)
         
     # Because of the if above, response here is anything but Ok
-    resp 
+    resp
+}
     
-main = fn =>
+main = () => {
     api_key = "KEY_HERE"
     city = process.argv(2)
     weather_data = fetch_weather_data(city, api_key)
     temp = data["main"]["temp"]
     print ("Current temperature in ", city, " is ", temp)
+}

@@ -1,0 +1,61 @@
+# Algebraic effects need to be done in CPS and regular monads are a PITA to stack.
+# The `unwrap` operator works like haskell's <-, except it recursively chains
+# all the results that have an implementation of `chain`
+# 
+# unwrap = unwraps a single monad
+# unwrapN = unwraps N monad levels
+#
+# I think regular algebraic effects without CPS are better. See algebraic_fx.nova
+
+# Declare monads
+Option = oneof (v) { Value(v), None }
+
+chain += (option: Option, then: (v) -> Option) =>
+    if Value(v) == option {
+	then(v)
+    } else { 
+        None 
+    }
+
+wrap += (v) -> Option => Value(v)
+
+Error = oneof (v, e) { Value(v), Error(e) }
+
+wrappable.chain += (error: Error, then: (v) -> Error) =>
+    if Value(v) == error {
+	then(v)
+    } else {
+	error
+    }
+
+wrappable.wrap += (v) -> Error => Value(v)
+
+# A request returns an erroroable optional
+RequestError = oneof { ErrorHttpResponse, ... }
+
+request = (url) -> Error(Option(Response), RequestError) => ...
+
+main = () => {
+    # Unwrap will create a series of "chain" calls for every
+    # result that has an implementation of chain
+    response = unwrap2 request("https://www.google.com") 
+    to_str(response)
+}
+
+# The above is equivalent to
+main = () => {
+    response 
+    | chain(_, (error) => 
+        chain(error, (opt) => 
+	    wrap(to_str(opt))
+	) 
+	| wrap
+    )
+}
+
+
+## Auto unwrap
+# One alternative is to always automatically unwrap UNLESS there is a branch
+# that operates on the value.
+
+

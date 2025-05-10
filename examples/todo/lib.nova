@@ -1,0 +1,3 @@
+pub import lib
+    "git://github.com/somelib@1.3.4" somelib
+    "https://somedomain.com/mylib.tar.gz" lib2

@@ -97,7 +97,7 @@ Statements are commands executed within a block. Unlike expressions, they do not
 The `if` expression is used to conditionally execute a block of code. The `else` is optional and behaves as one would expect. There is no else if.
 
 ```
-if (condition) {
+if condition {
     # code
 } else {
     # code
@@ -143,7 +143,7 @@ All functions are named. There is no support for anonymous functions. All functi
 The `fn` keyword is used, followed by the function name, arguments, return type, and the function body. Example:
 
 ```
-fn add (a: i32, b: i32): i32 {
+add = (a: i32, b: i32) -> i32 => {
     return a + b
 }
 ```
@@ -165,7 +165,7 @@ The IR supports the following primitive types:
 Defined with the `struct` keyword, followed by the name. The fields are defined by the field name and the type, each on a separate line. Example:
 
 ```
-struct Point {
+Point = {
     x: i32
     y: i32
 }
@@ -196,6 +196,6 @@ The entire program is represented in one tree, called a module. The IR does not 
 The `extern` keyword is used to declare a function that is implemented in another language. The `export` keyword is used to declare a function that can be called from another language. Example:
 
 ```
-extern fn print(s: string)
+extern print (s: string)
 export fn add(a: i32, b: i32): i32
 ```

@@ -1,9 +1,11 @@
-import std functional try
+import std (functional try)
 
-Error = type (a, b) oneof a | Error(b)
+Error = type <a> (a, Error(b))
 
-try += (value, callback) => 
-    if value == Error(e) then
+try += value callback => {
+    if value == Error e {
         value
-    else
-        callback(value)
+    } else {
+        callback value
+    }
+}

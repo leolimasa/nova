@@ -1,4 +1,4 @@
-sysc = import std syscall
+import std (syscall sysc)
 
 File = type Linear({
     path: String
@@ -6,10 +6,12 @@ File = type Linear({
     mode: int
 })
 
-open = (path, mode) => 
+open = (path, mode) => {
     fd = sysc.open(path, mode)
-    if fd == -1 then
+    if fd == -1 { 
         return Error(FileOpenFail)
+    }
     Linear({ path, fd, mode })
+}
 
-close = (file: consumes File) => sysc.close(file.fd)
+close = fn (consume file: File) { sysc.close(file.fd) }

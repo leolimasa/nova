@@ -1,0 +1,8 @@
+
+
+power_manager = (event, gps, screen) => {
+	thread.select({
+		chan.rcv(event) => do_something()
+		gps = chan.rcv(gps) => do_something_else()
+	})
+}

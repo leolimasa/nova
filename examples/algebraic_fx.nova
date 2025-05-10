@@ -1,0 +1,83 @@
+# Effects are managed in nova by a mix of dependency injection and returns, 
+# mimicking a toned down version of algebraic effects.
+# Nova only supports one-shot "continuations"
+# fx is an argument that contains effect handlers and state. It is automatically
+# passed to and returned from functions.
+
+# -----------------------------------------------------------------------------
+# Sugar-free
+# -----------------------------------------------------------------------------
+
+# The ! means fx is a special argument, and will transform this function
+# (and all the ones that call it) into effectful functions by changing the
+# arguments and return signatures accordingly.
+request = (msg, !fx) -> { oneof (Request, a), b } =>
+    req = http.request("http://google.com")
+
+    { v, !fx.log.state } = !fx.log.throw(fx.log.state, "Starting request")
+    if v == Return(r) then
+    	return { v, !fx }
+
+    if req.status == 404 then
+	{ req, !fx.error.state } = !fx.error.throw(!fx.error.state, "Request error")
+	if req == Return(r) then
+	    return { r, !fx }
+
+handle_error = (fn: (e: Error) -> None) => {
+    state: None
+    throw: (state, msg) => ...
+}
+
+handle_log = (fn: (msg: String) -> None) => {
+    state: [] 
+    throw: (state, msg) => ...
+}
+
+somefun = (!fx) =>
+   !fx.error = handle_error((e) =>
+	...
+   )
+
+   !fx.log = handle_log((msg) =>
+	...
+   )
+
+   { req, !fx } = request(!fx, "test")
+   if req == Return(v) then
+	return { v, !fx }
+}
+
+# -----------------------------------------------------------------------------
+# Sugared 
+# -----------------------------------------------------------------------------
+
+request = (msg) =>
+    req = http.request("http://www.google.com")
+    log("Starting request") # this will automatically add the fx argument
+    if request.status == 404 then
+	log("Request error")
+	error("Could not complete request")
+    to_str(req)
+
+...handlers are defined as above...
+
+somefun = () =>
+   !fx.error = handle_error ...
+   !fx.log = handle_log ...
+   req = request("test")
+
+
+# -----------------------------------------------------------------------------
+# Security
+# -----------------------------------------------------------------------------
+#
+# IO operation handlers come as an argument in main and need to be
+# manually passed to fx. Otherwise libraries will not have access to it.
+main = (effects) =>
+    !fx = {
+	io: {
+	    file: effects.file
+	    net: effects.net
+	}
+    }
+    ...

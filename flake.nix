@@ -28,17 +28,27 @@
               cargo
               rust-analyzer
               # wabt
-              nodejs_22
-              wasm-tools
+              #nodejs_22
+              #wasm-tools
               http-server
-              clang
-              llvm_18
-              libffi
-              libxml2
+              #clang
+              #llvm_18
+              #libffi
+              #libxml2
+              rustc
+              darwin.apple_sdk.frameworks.System
             ]; 
 
             shellHook = ''
-              export ENV_NAME=nova
+              export ENV_NAME="$ENV_NAME nova"
+
+              # If on darwin, set LIBRARY_PATH to xcode lib
+              # and download rust-analyer
+              if [[ "$(uname)" == "Darwin" ]]; then
+                export LIBRARY_PATH="$LIBRARY_PATH:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib"
+                rustup component add rust-analyzer
+              fi
+
               exec $SHELL
             '';
           });
